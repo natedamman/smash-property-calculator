@@ -6,6 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Shield, Lock, CheckCircle2, Loader2 } from "lucide-react";
 import { type PropertyInputs, type FinancialInputs, formatCurrency } from "@/lib/calculations";
+import {
+  type QualificationData,
+  type InvestorType,
+  type LeadScore,
+  EQUITY_RANGE_LABELS,
+  TIMELINE_LABELS,
+  OWNERSHIP_LABELS,
+} from "@/lib/lead-scoring";
 
 interface Props {
   open: boolean;
@@ -13,9 +21,21 @@ interface Props {
   onSuccess: () => void;
   propertyInputs: PropertyInputs;
   financialInputs: FinancialInputs;
+  qualification: QualificationData;
+  investorType: InvestorType | null;
+  leadScore: LeadScore | null;
 }
 
-export function LeadCaptureModal({ open, onClose, onSuccess, propertyInputs, financialInputs }: Props) {
+export function LeadCaptureModal({
+  open,
+  onClose,
+  onSuccess,
+  propertyInputs,
+  financialInputs,
+  qualification,
+  investorType,
+  leadScore,
+}: Props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -36,24 +56,69 @@ export function LeadCaptureModal({ open, onClose, onSuccess, propertyInputs, fin
       // Replace PORTAL_ID and FORM_ID with actual HubSpot values
       const PORTAL_ID = "YOUR_HUBSPOT_PORTAL_ID";
       const FORM_ID = "YOUR_HUBSPOT_FORM_ID";
-      
+
+      // Build enriched fields array
+      const fields = [
+        // Standard contact fields
+        { objectTypeId: "0-1", name: "firstname", value: firstName },
+        { objectTypeId: "0-1", name: "lastname", value: lastName },
+        { objectTypeId: "0-1", name: "email", value: email },
+        { objectTypeId: "0-1", name: "phone", value: phone },
+        // Property details
+        { objectTypeId: "0-1", name: "property_price", value: propertyInputs.propertyPrice.toString() },
+        { objectTypeId: "0-1", name: "weekly_rent", value: propertyInputs.weeklyRent.toString() },
+        { objectTypeId: "0-1", name: "property_state", value: propertyInputs.state },
+        { objectTypeId: "0-1", name: "property_type", value: propertyInputs.propertyType },
+        // Financial details
+        { objectTypeId: "0-1", name: "annual_income", value: financialInputs.annualIncome.toString() },
+        { objectTypeId: "0-1", name: "deposit_amount", value: financialInputs.deposit.toString() },
+        { objectTypeId: "0-1", name: "interest_rate", value: financialInputs.interestRate.toString() },
+        // Lead source
+        { objectTypeId: "0-1", name: "lead_source", value: "Property Wealth Calculator" },
+        // Qualification & segmentation fields
+        { objectTypeId: "0-1", name: "investor_type", value: investorType ?? "" },
+        {
+          objectTypeId: "0-1",
+          name: "property_ownership_status",
+          value: qualification.propertyOwnership
+            ? OWNERSHIP_LABELS[qualification.propertyOwnership]
+            : "",
+        },
+        {
+          objectTypeId: "0-1",
+          name: "usable_equity_range",
+          value: qualification.equityRange
+            ? EQUITY_RANGE_LABELS[qualification.equityRange]
+            : "",
+        },
+        {
+          objectTypeId: "0-1",
+          name: "investment_timeline",
+          value: qualification.investmentTimeline
+            ? TIMELINE_LABELS[qualification.investmentTimeline]
+            : "",
+        },
+        // Lead scoring fields
+        {
+          objectTypeId: "0-1",
+          name: "lead_temperature",
+          value: leadScore?.temperature ?? "",
+        },
+        {
+          objectTypeId: "0-1",
+          name: "lead_score",
+          value: leadScore?.score?.toString() ?? "",
+        },
+        {
+          objectTypeId: "0-1",
+          name: "lead_score_reasons",
+          value: leadScore?.reasons?.join("; ") ?? "",
+        },
+      ];
+
       const hubspotData = {
         submittedAt: Date.now().toString(),
-        fields: [
-          { objectTypeId: "0-1", name: "firstname", value: firstName },
-          { objectTypeId: "0-1", name: "lastname", value: lastName },
-          { objectTypeId: "0-1", name: "email", value: email },
-          { objectTypeId: "0-1", name: "phone", value: phone },
-          // Custom properties — map these in HubSpot
-          { objectTypeId: "0-1", name: "property_price", value: propertyInputs.propertyPrice.toString() },
-          { objectTypeId: "0-1", name: "weekly_rent", value: propertyInputs.weeklyRent.toString() },
-          { objectTypeId: "0-1", name: "property_state", value: propertyInputs.state },
-          { objectTypeId: "0-1", name: "property_type", value: propertyInputs.propertyType },
-          { objectTypeId: "0-1", name: "annual_income", value: financialInputs.annualIncome.toString() },
-          { objectTypeId: "0-1", name: "deposit_amount", value: financialInputs.deposit.toString() },
-          { objectTypeId: "0-1", name: "interest_rate", value: financialInputs.interestRate.toString() },
-          { objectTypeId: "0-1", name: "lead_source", value: "Property Wealth Calculator" },
-        ],
+        fields,
         context: {
           pageUri: window.location.href,
           pageName: "Property Wealth Snapshot Calculator",
@@ -76,14 +141,20 @@ export function LeadCaptureModal({ open, onClose, onSuccess, propertyInputs, fin
       } else {
         // Log the lead data for debugging / manual capture
         console.log("Lead captured (HubSpot not configured):", {
-          firstName, lastName, email, phone,
+          firstName,
+          lastName,
+          email,
+          phone,
           property: propertyInputs,
           financial: financialInputs,
+          qualification,
+          investorType,
+          leadScore,
         });
       }
 
       // Small delay for UX
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise((resolve) => setTimeout(resolve, 800));
       onSuccess();
     } catch (err) {
       console.error("Lead capture error:", err);
@@ -100,15 +171,19 @@ export function LeadCaptureModal({ open, onClose, onSuccess, propertyInputs, fin
         <DialogHeader>
           <DialogTitle className="text-lg">Unlock Your Full Report</DialogTitle>
           <DialogDescription className="text-sm">
-            Enter your details to get your complete Property Wealth Snapshot with detailed projections, tax analysis, and access to a free 15-minute clarity call.
+            Enter your details to get your complete Property Wealth Snapshot with
+            detailed projections, tax analysis, and access to a free 15-minute
+            clarity call.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 mt-2">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <Label htmlFor="firstName" className="text-sm">First Name</Label>
-              <Input 
+              <Label htmlFor="firstName" className="text-sm">
+                First Name
+              </Label>
+              <Input
                 id="firstName"
                 data-testid="input-first-name"
                 value={firstName}
@@ -118,8 +193,10 @@ export function LeadCaptureModal({ open, onClose, onSuccess, propertyInputs, fin
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName" className="text-sm">Last Name</Label>
-              <Input 
+              <Label htmlFor="lastName" className="text-sm">
+                Last Name
+              </Label>
+              <Input
                 id="lastName"
                 data-testid="input-last-name"
                 value={lastName}
@@ -131,8 +208,10 @@ export function LeadCaptureModal({ open, onClose, onSuccess, propertyInputs, fin
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm">Email</Label>
-            <Input 
+            <Label htmlFor="email" className="text-sm">
+              Email
+            </Label>
+            <Input
               id="email"
               data-testid="input-email"
               type="email"
@@ -144,8 +223,10 @@ export function LeadCaptureModal({ open, onClose, onSuccess, propertyInputs, fin
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone" className="text-sm">Phone (optional)</Label>
-            <Input 
+            <Label htmlFor="phone" className="text-sm">
+              Phone (optional)
+            </Label>
+            <Input
               id="phone"
               data-testid="input-phone"
               type="tel"
@@ -157,23 +238,26 @@ export function LeadCaptureModal({ open, onClose, onSuccess, propertyInputs, fin
           </div>
 
           <div className="flex items-start gap-2">
-            <Checkbox 
-              id="consent" 
+            <Checkbox
+              id="consent"
               data-testid="checkbox-consent"
               checked={consent}
               onCheckedChange={(v) => setConsent(v === true)}
               className="mt-0.5"
             />
-            <label htmlFor="consent" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
-              I agree to receive my Property Wealth Snapshot report and occasional property investment insights from Smash Property. You can unsubscribe at any time.
+            <label
+              htmlFor="consent"
+              className="text-xs text-muted-foreground leading-relaxed cursor-pointer"
+            >
+              I agree to receive my Property Wealth Snapshot report and
+              occasional property investment insights from Smash Property. You
+              can unsubscribe at any time.
             </label>
           </div>
 
-          {error && (
-            <p className="text-xs text-destructive">{error}</p>
-          )}
+          {error && <p className="text-xs text-destructive">{error}</p>}
 
-          <Button 
+          <Button
             onClick={handleSubmit}
             disabled={!isValid || loading}
             data-testid="button-submit-lead"
