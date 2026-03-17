@@ -162,7 +162,7 @@ export function getPersonalisedCopy(
       resultsSubtitle: "Here's how your first investment property could perform",
       fearHeadline: "Every Year You Wait, You Fall Further Behind",
       fearSubheadline: "While you're thinking about it, property prices are climbing — and so is the cost of getting started",
-      fearCtaText: "Take the First Step — Free 15-Min Clarity Call",
+      fearCtaText: "Make This a Reality",
       ctaHeadline: "Not Sure Where to Start? That's Exactly Why We're Here",
       ctaDescription: "In just 15 minutes, we'll review your numbers, explain what's realistic, and map out your first steps — no jargon, no pressure. Most first-time investors wish they'd had this conversation sooner.",
       ctaBadge: "Perfect for First-Time Investors",
@@ -181,9 +181,7 @@ export function getPersonalisedCopy(
       resultsSubtitle: "Here's how adding this property strengthens your portfolio",
       fearHeadline: "Your Portfolio Should Be Working Harder",
       fearSubheadline: "Every month without your next acquisition is compounding growth you'll never recover",
-      fearCtaText: isReadySoon
-        ? "Let's Accelerate Your Portfolio — Book Now"
-        : "Plan Your Next Move — Free Strategy Call",
+      fearCtaText: "Make This a Reality",
       ctaHeadline: "Ready to Scale Smarter?",
       ctaDescription: "In 15 minutes, we'll review how this property fits your portfolio, identify the optimal structure, and map out your next 2-3 acquisitions — with real numbers, not guesswork.",
       ctaBadge: "For Experienced Investors",
@@ -202,7 +200,7 @@ export function getPersonalisedCopy(
     resultsSubtitle: "Here's how your investment property could perform",
     fearHeadline: "The Cost of Doing Nothing",
     fearSubheadline: "What happens if you don't act on this",
-    fearCtaText: "Don't Wait — Book Your Free Clarity Call",
+    fearCtaText: "Make This a Reality",
     ctaHeadline: "Get Clarity on Your Next Move",
     ctaDescription: "In just 15 minutes, our team will review your results, answer your questions, and map out a clear path forward — no jargon, no pressure.",
     ctaBadge: "Free 15-Minute Call",
