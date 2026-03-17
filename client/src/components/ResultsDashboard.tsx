@@ -183,7 +183,7 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
       </Tabs>
 
       {/* FEAR SECTION */}
-      <div className="relative overflow-hidden rounded-2xl border-2 border-red-500/40 bg-gradient-to-br from-red-950/30 via-red-900/15 to-background dark:from-red-950/50 dark:via-red-900/25">
+      <div className="relative overflow-hidden rounded-2xl border-2 border-red-500/40 bg-gradient-to-br from-red-100 via-red-50 to-background dark:from-red-950/50 dark:via-red-900/25">
         <div className="absolute inset-0 rounded-2xl border-2 border-red-500/20 animate-pulse pointer-events-none" />
         <div className="relative p-6 sm:p-8">
           <div className="flex items-center gap-3 mb-6">
@@ -196,44 +196,44 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
 
           {/* Side-by-side comparison */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <div className="bg-red-500/10 rounded-xl p-5 border border-red-500/20">
-              <div className="flex items-center gap-2 mb-3"><Ban className="w-5 h-5 text-red-400" /><span className="text-sm font-semibold text-red-400">If You Do Nothing</span></div>
-              <p className="text-xs text-muted-foreground mb-2">Your {formatCurrency(financialInputs.deposit)} in a savings account at 4% p.a. for 10 years:</p>
-              <p className="text-3xl font-bold text-red-400">{formatCurrency(tenYear.wealthIfNoInvestment)}</p>
-              <p className="text-xs text-muted-foreground mt-1">That's it. While inflation eats away at your purchasing power.</p>
+            <div className="bg-red-100 dark:bg-red-500/10 rounded-xl p-5 border border-red-300 dark:border-red-500/20">
+              <div className="flex items-center gap-2 mb-3"><Ban className="w-5 h-5 text-red-600 dark:text-red-400" /><span className="text-sm font-semibold text-red-600 dark:text-red-400">If You Do Nothing</span></div>
+              <p className="text-xs text-foreground/70 mb-2">Your {formatCurrency(financialInputs.deposit)} in a savings account at 4% p.a. for 10 years:</p>
+              <p className="text-3xl font-bold text-red-600 dark:text-red-400">{formatCurrency(tenYear.wealthIfNoInvestment)}</p>
+              <p className="text-xs text-foreground/70 mt-1">That's it. While inflation eats away at your purchasing power.</p>
             </div>
-            <div className="bg-emerald-500/10 rounded-xl p-5 border border-emerald-500/20">
-              <div className="flex items-center gap-2 mb-3"><Flame className="w-5 h-5 text-emerald-500" /><span className="text-sm font-semibold text-emerald-500">If You Invest Today</span></div>
-              <p className="text-xs text-muted-foreground mb-2">Property equity + rental income + tax savings over 10 years:</p>
-              <p className="text-3xl font-bold text-emerald-500">{formatCurrency(totalWealthIfInvested)}</p>
-              <p className="text-xs text-muted-foreground mt-1">Real wealth that compounds year after year.</p>
+            <div className="bg-emerald-100 dark:bg-emerald-500/10 rounded-xl p-5 border border-emerald-300 dark:border-emerald-500/20">
+              <div className="flex items-center gap-2 mb-3"><Flame className="w-5 h-5 text-emerald-600 dark:text-emerald-500" /><span className="text-sm font-semibold text-emerald-600 dark:text-emerald-500">If You Invest Today</span></div>
+              <p className="text-xs text-foreground/70 mb-2">Property equity + rental income + tax savings over 10 years:</p>
+              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-500">{formatCurrency(totalWealthIfInvested)}</p>
+              <p className="text-xs text-foreground/70 mt-1">Real wealth that compounds year after year.</p>
             </div>
           </div>
 
           {/* Opportunity cost */}
-          <div className="bg-red-600/15 rounded-xl p-5 mb-6 border-2 border-red-500/30 text-center">
-            <p className="text-sm text-muted-foreground mb-1">The wealth gap between acting and waiting:</p>
-            <p className="text-3xl sm:text-4xl font-black text-red-500" data-testid="text-opportunity-cost">{formatCurrency(tenYear.opportunityCost)}</p>
-            <p className="text-sm text-muted-foreground mt-2">That's <span className="text-foreground font-semibold">{formatCurrency(Math.round(tenYear.opportunityCost / 10 / 365))} per day</span> you're leaving on the table</p>
+          <div className="bg-red-200/70 dark:bg-red-600/15 rounded-xl p-5 mb-6 border-2 border-red-400 dark:border-red-500/30 text-center">
+            <p className="text-sm text-foreground/70 mb-1">The wealth gap between acting and waiting:</p>
+            <p className="text-3xl sm:text-4xl font-black text-red-600 dark:text-red-500" data-testid="text-opportunity-cost">{formatCurrency(tenYear.opportunityCost)}</p>
+            <p className="text-sm text-foreground/70 mt-2">That's <span className="text-foreground font-semibold">{formatCurrency(Math.round(tenYear.opportunityCost / 10 / 365))} per day</span> you're leaving on the table</p>
           </div>
 
           {/* Fear bullets */}
           <div className="space-y-4 mb-6">
-            <div className="flex items-start gap-3 bg-background/40 rounded-lg p-3">
-              <Timer className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
-              <div><p className="text-sm font-semibold text-foreground">Every year you wait costs you ~{formatCurrency(costOfWaiting1Year)}</p><p className="text-xs text-muted-foreground">{investorType === 'first-time' ? "Property prices don't wait for anyone. The longer you delay, the higher the barrier to entry." : "Your competitors are acquiring. Every month without your next property is compounding growth you'll never recover."}</p></div>
+            <div className="flex items-start gap-3 bg-white/60 dark:bg-background/40 rounded-lg p-3">
+              <Timer className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+              <div><p className="text-sm font-semibold text-foreground">Every year you wait costs you ~{formatCurrency(costOfWaiting1Year)}</p><p className="text-xs text-foreground/70">{investorType === 'first-time' ? "Property prices don't wait for anyone. The longer you delay, the higher the barrier to entry." : "Your competitors are acquiring. Every month without your next property is compounding growth you'll never recover."}</p></div>
             </div>
-            <div className="flex items-start gap-3 bg-background/40 rounded-lg p-3">
-              <TrendingDown className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
-              <div><p className="text-sm font-semibold text-foreground">Inflation is silently destroying your savings</p><p className="text-xs text-muted-foreground">Your {formatCurrency(financialInputs.deposit)} will buy less property next year. And even less the year after that.</p></div>
+            <div className="flex items-start gap-3 bg-white/60 dark:bg-background/40 rounded-lg p-3">
+              <TrendingDown className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+              <div><p className="text-sm font-semibold text-foreground">Inflation is silently destroying your savings</p><p className="text-xs text-foreground/70">Your {formatCurrency(financialInputs.deposit)} will buy less property next year. And even less the year after that.</p></div>
             </div>
-            <div className="flex items-start gap-3 bg-background/40 rounded-lg p-3">
-              <DollarSign className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
-              <div><p className="text-sm font-semibold text-foreground">You're forfeiting {formatCurrency(taxBenefits.taxSavingAnnual)}/yr in tax deductions</p><p className="text-xs text-muted-foreground">The ATO gives this back to property investors — not to people sitting on savings accounts.</p></div>
+            <div className="flex items-start gap-3 bg-white/60 dark:bg-background/40 rounded-lg p-3">
+              <DollarSign className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+              <div><p className="text-sm font-semibold text-foreground">You're forfeiting {formatCurrency(taxBenefits.taxSavingAnnual)}/yr in tax deductions</p><p className="text-xs text-foreground/70">The ATO gives this back to property investors — not to people sitting on savings accounts.</p></div>
             </div>
           </div>
 
-          <Button onClick={scrollToCTA} variant="destructive" size="lg" className="w-full h-14 text-base font-bold bg-red-600 hover:bg-red-700 text-white" data-testid="button-fear-cta"><Phone className="w-5 h-5 mr-2" />{copy.fearCtaText}</Button>
+          <Button onClick={scrollToCTA} variant="destructive" size="lg" className="w-full h-auto min-h-[3.5rem] py-3 px-4 text-sm sm:text-base font-bold bg-red-600 hover:bg-red-700 text-white leading-tight" data-testid="button-fear-cta"><Phone className="w-5 h-5 mr-2 shrink-0" /><span>{copy.fearCtaText}</span></Button>
           <p className="text-xs text-center text-muted-foreground mt-3">{investorType === 'first-time' ? "Most first-time investors say they wish they'd started 5 years earlier. Don't be one of them." : "Smart investors move fast when the numbers make sense. The numbers make sense."}</p>
         </div>
       </div>

@@ -120,7 +120,7 @@ export default function CalculatorPage() {
   const isStep2Valid = Number(annualIncome) > 0 && Number(deposit) > 0 && loanAmount > 0;
 
   const progressPercent = step === 0 ? 8 : step === 1 ? 30 : step === 2 ? 55 : step === 3 ? 75 : 100;
-  const stepDisplay = step === 0 ? 1 : step === 1 ? 2 : step === 2 ? 3 : step === 3 ? 3 : 4;
+  const stepDisplay = step === 0 ? 1 : step === 1 ? 2 : step === 2 ? 3 : 3;
 
   const leadScore = isStep0Valid ? calculateLeadScore(qualification, Number(annualIncome) || 0, Number(deposit) || 0) : null;
 
@@ -143,7 +143,7 @@ export default function CalculatorPage() {
       <div className="bg-card/50 border-b border-border/30">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-muted-foreground">Step {stepDisplay} of 3</span>
+            <span className="text-xs font-medium text-muted-foreground">{step === 5 ? 'Complete' : `Step ${stepDisplay} of 3`}</span>
             <span className="text-xs text-muted-foreground">
               {step === 0 ? "Tell us about you" : step <= 2 ? "Calculating your snapshot..." : step === 3 ? "Results ready" : "Complete"}
             </span>
