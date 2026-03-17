@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   TrendingUp, TrendingDown, DollarSign, Percent, 
-  BarChart3, CheckCircle2, Phone, Clock, 
+  BarChart3, CheckCircle2, Phone, Clock, Calendar,
   Timer, Users, ShieldCheck, Star, Flame, Skull, Ban
 } from "lucide-react";
 import { 
@@ -267,7 +267,7 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
               <div className="flex items-start gap-2 bg-background/60 rounded-lg p-3 border border-border/50"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /><span className="text-xs text-muted-foreground">{investorType === 'first-time' ? 'Clear first steps tailored to you' : 'Portfolio optimisation strategy'}</span></div>
               <div className="flex items-start gap-2 bg-background/60 rounded-lg p-3 border border-border/50"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /><span className="text-xs text-muted-foreground">No obligation, no sales pitch</span></div>
             </div>
-            <Button size="lg" className="h-14 px-10 text-base font-semibold animate-pulse-glow" data-testid="button-book-session"><Phone className="w-5 h-5 mr-2" />{copy.ctaButtonText}</Button>
+            <Button size="lg" className="h-14 px-10 text-base font-semibold animate-pulse-glow" data-testid="button-book-session"><Calendar className="w-5 h-5 mr-2" />{copy.ctaButtonText}</Button>
             <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /><span>100% free</span></div>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Clock className="w-3.5 h-3.5" /><span>Just 15 minutes</span></div>
