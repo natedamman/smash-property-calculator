@@ -9,10 +9,12 @@ import { type PropertyInputs, type FinancialInputs, formatCurrency } from "@/lib
 import {
   type QualificationData,
   type InvestorType,
+  type WealthGoal,
   type LeadScore,
   EQUITY_RANGE_LABELS,
   TIMELINE_LABELS,
   OWNERSHIP_LABELS,
+  WEALTH_GOAL_CRM_VALUES,
 } from "@/lib/lead-scoring";
 
 interface Props {
@@ -24,6 +26,7 @@ interface Props {
   qualification: QualificationData;
   investorType: InvestorType | null;
   leadScore: LeadScore | null;
+  wealthGoal: WealthGoal | null;
 }
 
 export function LeadCaptureModal({
@@ -35,6 +38,7 @@ export function LeadCaptureModal({
   qualification,
   investorType,
   leadScore,
+  wealthGoal,
 }: Props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -68,7 +72,7 @@ export function LeadCaptureModal({
         { objectTypeId: "0-1", name: "property_price", value: propertyInputs.propertyPrice.toString() },
         { objectTypeId: "0-1", name: "weekly_rent", value: propertyInputs.weeklyRent.toString() },
         { objectTypeId: "0-1", name: "property_state", value: propertyInputs.state },
-        { objectTypeId: "0-1", name: "property_type", value: propertyInputs.propertyType },
+        { objectTypeId: "0-1", name: "primary_wealth_goal", value: wealthGoal ? WEALTH_GOAL_CRM_VALUES[wealthGoal] : "" },
         // Financial details
         { objectTypeId: "0-1", name: "annual_income", value: financialInputs.annualIncome.toString() },
         { objectTypeId: "0-1", name: "deposit_amount", value: financialInputs.deposit.toString() },

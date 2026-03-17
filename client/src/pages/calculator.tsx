@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
-  Building2, DollarSign, TrendingUp, Lock, ArrowRight, ArrowLeft, 
+  DollarSign, TrendingUp, Lock, ArrowRight, ArrowLeft, 
   CheckCircle2, Info, Home, Wallet, BarChart3, Calculator,
   Shield, Sparkles, Users, Target, Briefcase, Clock, Zap
 } from "lucide-react";
@@ -18,9 +18,10 @@ import {
 } from "@/lib/calculations";
 import {
   type InvestorType, type PropertyOwnership, type EquityRange, type InvestmentTimeline,
-  type QualificationData,
-  calculateLeadScore, getPersonalisedCopy,
+  type WealthGoal, type QualificationData,
+  calculateLeadScore, getPersonalisedCopy, getStrategyProfile,
   EQUITY_RANGE_LABELS, TIMELINE_LABELS, OWNERSHIP_LABELS,
+  WEALTH_GOAL_LABELS, WEALTH_GOAL_SUBTITLES,
 } from "@/lib/lead-scoring";
 import { ResultsDashboard } from "@/components/ResultsDashboard";
 import { LeadCaptureModal } from "@/components/LeadCaptureModal";
@@ -37,11 +38,7 @@ const STATES = [
   { value: 'ACT', label: 'ACT' },
 ];
 
-const PROPERTY_TYPES = [
-  { value: 'house', label: 'House', icon: Home },
-  { value: 'unit', label: 'Unit / Apartment', icon: Building2 },
-  { value: 'townhouse', label: 'Townhouse', icon: Building2 },
-];
+
 
 type Step = 0 | 1 | 2 | 3 | 5;
 
@@ -58,12 +55,14 @@ export default function CalculatorPage() {
   const [equityRange, setEquityRange] = useState<EquityRange | null>(null);
   const [investmentTimeline, setInvestmentTimeline] = useState<InvestmentTimeline | null>(null);
 
+  // Wealth goal (replaces property type)
+  const [wealthGoal, setWealthGoal] = useState<WealthGoal | null>(null);
+
   // Property inputs
   const [propertyPrice, setPropertyPrice] = useState<string>("650000");
   const [weeklyRent, setWeeklyRent] = useState<string>("500");
   const [suburb, setSuburb] = useState<string>("");
   const [state, setState] = useState<string>("VIC");
-  const [propertyType, setPropertyType] = useState<string>("house");
   
   // Financial inputs
   const [annualIncome, setAnnualIncome] = useState<string>("120000");
@@ -80,11 +79,17 @@ export default function CalculatorPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [step]);
 
+  // Derive weekly rent from strategy profile yield when price changes
+  const strategyProfile = getStrategyProfile(wealthGoal);
+  const derivedWeeklyRent = wealthGoal
+    ? Math.round((Number(propertyPrice) || 0) * (strategyProfile.grossRentalYield / 100) / 52)
+    : Number(weeklyRent) || 0;
+
   const propertyInputs: PropertyInputs = {
     propertyPrice: Number(propertyPrice) || 0,
-    weeklyRent: Number(weeklyRent) || 0,
+    weeklyRent: derivedWeeklyRent,
     suburb, state,
-    propertyType: propertyType as 'house' | 'unit' | 'townhouse',
+    wealthGoal,
   };
 
   const financialInputs: FinancialInputs = {
@@ -116,7 +121,7 @@ export default function CalculatorPage() {
   const loanAmount = (Number(propertyPrice) || 0) - (Number(deposit) || 0);
 
   const isStep0Valid = investorType !== null && propertyOwnership !== null && equityRange !== null && investmentTimeline !== null;
-  const isStep1Valid = Number(propertyPrice) > 0 && Number(weeklyRent) > 0 && state;
+  const isStep1Valid = Number(propertyPrice) > 0 && wealthGoal !== null && state;
   const isStep2Valid = Number(annualIncome) > 0 && Number(deposit) > 0 && loanAmount > 0;
 
   const progressPercent = step === 0 ? 8 : step === 1 ? 30 : step === 2 ? 55 : step === 3 ? 75 : 100;
@@ -263,31 +268,39 @@ export default function CalculatorPage() {
           </div>
         )}
 
-        {/* STEP 1: Property Details */}
+        {/* STEP 1: Wealth Goal + Property Details */}
         {step === 1 && (
           <div className="step-enter">
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><Home className="w-5 h-5 text-primary" /></div>
+                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center"><Target className="w-5 h-5 text-primary" /></div>
                 <div>
-                  <h1 className="text-xl font-semibold" data-testid="text-step1-title">Property Details</h1>
+                  <h1 className="text-xl font-semibold" data-testid="text-step1-title">Investment Strategy</h1>
                   <p className="text-sm text-muted-foreground">{copy.step1Subtitle}</p>
                 </div>
               </div>
             </div>
             <div className="space-y-6">
+              {/* Wealth Goal */}
               <div className="space-y-3">
-                <Label className="text-sm font-medium">Property Type</Label>
-                <div className="grid grid-cols-3 gap-3">
-                  {PROPERTY_TYPES.map((type) => (
-                    <button key={type.value} onClick={() => setPropertyType(type.value)} data-testid={`button-property-type-${type.value}`}
-                      className={`p-4 rounded-xl border-2 text-center transition-all duration-200 ${propertyType === type.value ? 'border-primary bg-primary/5 text-foreground' : 'border-border hover:border-primary/40 text-muted-foreground hover:text-foreground'}`}>
-                      <type.icon className={`w-5 h-5 mx-auto mb-2 ${propertyType === type.value ? 'text-primary' : ''}`} />
-                      <span className="text-sm font-medium">{type.label}</span>
+                <Label className="text-sm font-medium">What is your primary wealth goal?</Label>
+                <div className="grid grid-cols-1 gap-3">
+                  {(Object.entries(WEALTH_GOAL_LABELS) as [WealthGoal, string][]).map(([value, label]) => (
+                    <button key={value} onClick={() => setWealthGoal(value)} data-testid={`button-goal-${value}`}
+                      className={`p-5 rounded-xl border-2 text-left transition-all duration-200 ${wealthGoal === value ? 'border-primary bg-primary/5 text-foreground' : 'border-border hover:border-primary/40 text-muted-foreground hover:text-foreground'}`}>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-sm font-semibold block">{label}</span>
+                          <span className="text-xs text-muted-foreground">{WEALTH_GOAL_SUBTITLES[value]}</span>
+                        </div>
+                        {wealthGoal === value && <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />}
+                      </div>
                     </button>
                   ))}
                 </div>
               </div>
+
+              {/* State */}
               <div className="space-y-2">
                 <Label className="text-sm font-medium">State</Label>
                 <Select value={state} onValueChange={setState}>
@@ -295,10 +308,8 @@ export default function CalculatorPage() {
                   <SelectContent>{STATES.map(s => (<SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>))}</SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Suburb (optional)</Label>
-                <Input data-testid="input-suburb" value={suburb} onChange={(e) => setSuburb(e.target.value)} placeholder="e.g. Richmond, Parramatta" className="h-12" />
-              </div>
+
+              {/* Purchase Price */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label className="text-sm font-medium">Purchase Price</Label>
@@ -308,23 +319,17 @@ export default function CalculatorPage() {
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input data-testid="input-property-price" type="text" inputMode="numeric" value={propertyPrice} onChange={(e) => setPropertyPrice(e.target.value.replace(/[^0-9]/g, ''))} className="pl-9 h-12 text-lg font-medium" />
                 </div>
-                {Number(propertyPrice) > 0 && <p className="text-xs text-muted-foreground">Stamp duty ({state}): {formatCurrency(stampDuty)}</p>}
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium">Expected Weekly Rent</Label>
-                  <Tooltip><TooltipTrigger><Info className="w-4 h-4 text-muted-foreground" /></TooltipTrigger><TooltipContent><p className="text-xs max-w-[200px]">Estimated weekly rental income. Check realestate.com.au for comparable rents</p></TooltipContent></Tooltip>
-                </div>
-                <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input data-testid="input-weekly-rent" type="text" inputMode="numeric" value={weeklyRent} onChange={(e) => setWeeklyRent(e.target.value.replace(/[^0-9]/g, ''))} className="pl-9 h-12 text-lg font-medium" />
-                </div>
-                {Number(propertyPrice) > 0 && Number(weeklyRent) > 0 && <p className="text-xs text-muted-foreground">Gross yield: {formatPercent((Number(weeklyRent) * 52 / Number(propertyPrice)) * 100)}</p>}
+                {Number(propertyPrice) > 0 && (
+                  <div className="space-y-1">
+                    <p className="text-xs text-muted-foreground">Stamp duty ({state}): {formatCurrency(stampDuty)}</p>
+                    {wealthGoal && <p className="text-xs text-muted-foreground">Estimated weekly rent ({strategyProfile.grossRentalYield}% yield): <span className="font-medium text-foreground">{formatCurrency(derivedWeeklyRent)}/wk</span></p>}
+                  </div>
+                )}
               </div>
             </div>
             <div className="mt-8 flex gap-3">
               <Button variant="outline" onClick={handleBack} data-testid="button-back-step1" className="h-12"><ArrowLeft className="w-4 h-4 mr-2" />Back</Button>
-              <Button onClick={handleNext} disabled={!isStep1Valid} data-testid="button-next-step1" className="flex-1 h-12 text-base font-semibold" size="lg">Next: Your Financial Position<ArrowRight className="w-4 h-4 ml-2" /></Button>
+              <Button onClick={handleNext} disabled={!isStep1Valid} data-testid="button-next-step1" className="flex-1 h-12 text-sm sm:text-base font-semibold" size="lg"><span className="hidden sm:inline">Next: Your Financial Position</span><span className="sm:hidden">Next: Finances</span><ArrowRight className="w-4 h-4 ml-2 shrink-0" /></Button>
             </div>
             <p className="text-xs text-center text-muted-foreground mt-3">Takes under 60 seconds. Your results are calculated instantly.</p>
           </div>
@@ -459,12 +464,12 @@ export default function CalculatorPage() {
         {/* STEP 5: Full Results */}
         {step === 5 && results && leadCaptured && (
           <div className="step-enter">
-            <ResultsDashboard results={results} propertyInputs={propertyInputs} financialInputs={financialInputs} investorType={investorType} qualification={qualification} leadScore={leadScore} copy={copy} />
+            <ResultsDashboard results={results} propertyInputs={propertyInputs} financialInputs={financialInputs} investorType={investorType} qualification={qualification} leadScore={leadScore} copy={copy} wealthGoal={wealthGoal} />
           </div>
         )}
       </main>
 
-      <LeadCaptureModal open={showModal} onClose={() => setShowModal(false)} onSuccess={handleLeadCaptured} propertyInputs={propertyInputs} financialInputs={financialInputs} qualification={qualification} investorType={investorType} leadScore={leadScore} />
+      <LeadCaptureModal open={showModal} onClose={() => setShowModal(false)} onSuccess={handleLeadCaptured} propertyInputs={propertyInputs} financialInputs={financialInputs} qualification={qualification} investorType={investorType} leadScore={leadScore} wealthGoal={wealthGoal} />
 
       <footer className="border-t border-border/50 bg-card/30 mt-auto">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">

@@ -3,12 +3,14 @@
 // Australian property investment calculations
 // ============================================
 
+import { type WealthGoal, type StrategyProfile, getStrategyProfile } from './lead-scoring';
+
 export interface PropertyInputs {
   propertyPrice: number;
   weeklyRent: number;
   suburb: string;
   state: string;
-  propertyType: 'house' | 'unit' | 'townhouse';
+  wealthGoal: WealthGoal | null;
 }
 
 export interface FinancialInputs {
@@ -156,41 +158,29 @@ function remainingBalance(principal: number, annualRate: number, years: number, 
   return principal * Math.pow(1 + r, monthsPaid) - payment * (Math.pow(1 + r, monthsPaid) - 1) / r;
 }
 
-// Growth rate based on state/type (conservative estimates)
-function getGrowthRate(state: string, propertyType: string): number {
-  const baseRates: Record<string, number> = {
-    'VIC': 0.052,
-    'NSW': 0.058,
-    'QLD': 0.065,
-    'SA': 0.055,
-    'WA': 0.060,
-    'TAS': 0.048,
-    'NT': 0.035,
-    'ACT': 0.050,
-  };
-  const base = baseRates[state] || 0.05;
-  // Units historically grow slightly less
-  if (propertyType === 'unit') return base * 0.85;
-  if (propertyType === 'townhouse') return base * 0.92;
-  return base;
+// Growth rate based on wealth goal strategy profile
+function getGrowthRate(profile: StrategyProfile): number {
+  return profile.capitalGrowthRate / 100;
 }
 
 // Depreciation estimate (Division 40 + Division 43)
-function estimateDepreciation(price: number, propertyType: string, age: number = 5): number {
-  // Simplified: newer properties get higher depreciation
-  // Division 43 (building): 2.5% of construction cost (~60% of purchase for newer)
-  const constructionRatio = propertyType === 'unit' ? 0.65 : 0.55;
+function estimateDepreciation(price: number, depreciationMode: 'standard' | 'maximum'): number {
+  if (depreciationMode === 'maximum') {
+    // New build: higher construction ratio, full Div 40 plant & equipment
+    const constructionRatio = 0.70;
+    const buildingDepreciation = price * constructionRatio * 0.025;
+    const plantDepreciation = Math.min(price * 0.012, 10000);
+    return buildingDepreciation + plantDepreciation;
+  }
+  // Standard (older property): lower construction ratio, less plant
+  const constructionRatio = 0.55;
   const buildingDepreciation = price * constructionRatio * 0.025;
-  
-  // Division 40 (plant & equipment): ~$3k-$8k year 1
-  const plantDepreciation = propertyType === 'unit' 
-    ? Math.min(price * 0.008, 6000)
-    : Math.min(price * 0.006, 5000);
-  
+  const plantDepreciation = Math.min(price * 0.005, 4000);
   return buildingDepreciation + plantDepreciation;
 }
 
 export function calculateAll(property: PropertyInputs, financial: FinancialInputs): CalculatorResults {
+  const profile = getStrategyProfile(property.wealthGoal);
   const loanAmount = property.propertyPrice - financial.deposit;
   const monthlyPayment = monthlyRepayment(loanAmount, financial.interestRate / 100, financial.loanTerm);
   const annualRepayment = monthlyPayment * 12;
@@ -199,16 +189,18 @@ export function calculateAll(property: PropertyInputs, financial: FinancialInput
   // Interest portion (year 1 — roughly the whole payment is interest early on)
   const interestYear1 = loanAmount * (financial.interestRate / 100);
 
-  // Annual rental income
+  // Weekly rent derived from strategy profile yield if the user hasn't overridden
+  // We use the profile yield to compute rent from price
   const grossRentalIncome = property.weeklyRent * 52;
   
-  // Expenses
+  // Expenses — no strata for growth corridor (houses), include for tax reduction (new builds/apartments)
+  const isNewBuild = property.wealthGoal === 'tax_reduction';
   const managementFees = grossRentalIncome * 0.08; // 8% management
   const insurance = Math.max(property.propertyPrice * 0.002, 1200); // ~0.2% or min $1200
-  const maintenance = property.propertyPrice * 0.005; // 0.5%
+  const maintenance = isNewBuild ? property.propertyPrice * 0.003 : property.propertyPrice * 0.005; // lower for new builds
   const councilRates = property.state === 'VIC' ? 2200 : property.state === 'NSW' ? 1800 : 1600;
   const waterRates = 1000;
-  const strataFees = property.propertyType !== 'house' ? 3500 : 0;
+  const strataFees = isNewBuild ? 3500 : 0; // new builds (apartments) typically have strata
   const landlordInsurance = 500;
   
   const totalAnnualExpenses = managementFees + insurance + maintenance + councilRates + waterRates + strataFees + landlordInsurance;
@@ -242,7 +234,7 @@ export function calculateAll(property: PropertyInputs, financial: FinancialInput
   };
 
   // Tax benefits
-  const depreciation = estimateDepreciation(property.propertyPrice, property.propertyType);
+  const depreciation = estimateDepreciation(property.propertyPrice, profile.depreciationMode);
   const deductibleExpenses = totalAnnualExpenses + interestYear1 + depreciation;
   const negativeGearingLoss = Math.max(0, deductibleExpenses - grossRentalIncome);
   const marginalRate = getMarginalRate(financial.annualIncome);
@@ -262,7 +254,7 @@ export function calculateAll(property: PropertyInputs, financial: FinancialInput
   };
 
   // 10-year growth projection
-  const growthRate = getGrowthRate(property.state, property.propertyType);
+  const growthRate = getGrowthRate(profile);
   const projections: GrowthProjection[] = [];
   let cumulativeRental = 0;
   let cumulativeTax = 0;

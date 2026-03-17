@@ -16,7 +16,7 @@ import {
   type CalculatorResults, type PropertyInputs, type FinancialInputs,
   formatCurrency, formatPercent 
 } from "@/lib/calculations";
-import { type InvestorType, type QualificationData, type LeadScore, type PersonalisedCopy } from "@/lib/lead-scoring";
+import { type InvestorType, type WealthGoal, type QualificationData, type LeadScore, type PersonalisedCopy, getStrategyProfile, getTabOrder, WEALTH_GOAL_LABELS } from "@/lib/lead-scoring";
 
 interface Props {
   results: CalculatorResults;
@@ -26,6 +26,7 @@ interface Props {
   qualification: QualificationData;
   leadScore: LeadScore | null;
   copy: PersonalisedCopy;
+  wealthGoal: WealthGoal | null;
 }
 
 function AnimatedNumber({ value, prefix = "", suffix = "", className = "", delay = 0 }: { value: number; prefix?: string; suffix?: string; className?: string; delay?: number }) {
@@ -65,10 +66,11 @@ function SocialProofTicker() {
   );
 }
 
-export function ResultsDashboard({ results, propertyInputs, financialInputs, investorType, qualification, leadScore, copy }: Props) {
+export function ResultsDashboard({ results, propertyInputs, financialInputs, investorType, qualification, leadScore, copy, wealthGoal }: Props) {
   const { cashFlow, taxBenefits, tenYear, wealthScore } = results;
   const ctaRef = useRef<HTMLDivElement>(null);
   const scrollToCTA = () => { ctaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+  const tabOrder = getTabOrder(wealthGoal);
 
   const growthData = tenYear.projections.map(p => ({ year: `Year ${p.year}`, 'Property Value': p.propertyValue, 'Loan Balance': p.loanBalance, 'Equity': p.equity }));
   const scoreColor = wealthScore >= 75 ? 'text-emerald-500' : wealthScore >= 50 ? 'text-amber-500' : 'text-red-500';
@@ -83,8 +85,11 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
       <div className="text-center mb-8">
         <Badge className="mb-3 bg-primary/10 text-primary border-primary/20 hover:bg-primary/10"><CheckCircle2 className="w-3 h-3 mr-1" />Report Unlocked</Badge>
         <h1 className="text-xl font-bold mb-2" data-testid="text-results-title">{copy.resultsTitle}</h1>
-        <p className="text-sm text-muted-foreground">{propertyInputs.suburb ? `${propertyInputs.suburb}, ` : ''}{propertyInputs.state} &mdash; {formatCurrency(propertyInputs.propertyPrice)} {propertyInputs.propertyType}</p>
+        <p className="text-sm text-muted-foreground">{propertyInputs.suburb ? `${propertyInputs.suburb}, ` : ''}{propertyInputs.state} &mdash; {formatCurrency(propertyInputs.propertyPrice)}</p>
         <div className="mt-3 flex justify-center"><SocialProofTicker /></div>
+        {wealthGoal && (
+          <p className="text-xs text-muted-foreground italic mt-3 max-w-md mx-auto" data-testid="text-strategy-summary">{getStrategyProfile(wealthGoal).resultsSummary}</p>
+        )}
       </div>
 
       {/* Wealth Score */}
@@ -104,12 +109,14 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
         <MetricCard label="Net Yield" value={cashFlow.netYield} prefix="" suffix="%" color="text-foreground" subtext={`Gross: ${formatPercent(cashFlow.grossYield)}`} icon={Percent} delay={400} />
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="growth" className="w-full">
+      {/* Tabs — ordered by wealth goal */}
+      <Tabs defaultValue={tabOrder[0]} className="w-full">
         <TabsList className="w-full grid grid-cols-3">
-          <TabsTrigger value="growth" data-testid="tab-growth">10-Year Growth</TabsTrigger>
-          <TabsTrigger value="cashflow" data-testid="tab-cashflow">Cash Flow</TabsTrigger>
-          <TabsTrigger value="tax" data-testid="tab-tax">Tax Benefits</TabsTrigger>
+          {tabOrder.map(tab => (
+            <TabsTrigger key={tab} value={tab} data-testid={`tab-${tab}`}>
+              {tab === 'growth' ? '10-Year Growth' : tab === 'cashflow' ? 'Cash Flow' : 'Tax Benefits'}
+            </TabsTrigger>
+          ))}
         </TabsList>
         <TabsContent value="growth" className="mt-4 space-y-4">
           <Card className="p-5">

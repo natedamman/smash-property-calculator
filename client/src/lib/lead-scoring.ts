@@ -5,6 +5,84 @@
 // --- Investor Types ---
 export type InvestorType = 'first-time' | 'portfolio-builder';
 
+// --- Wealth Goals ---
+export type WealthGoal = 'capital_growth' | 'passive_income' | 'tax_reduction';
+
+export const WEALTH_GOAL_LABELS: Record<WealthGoal, string> = {
+  'capital_growth': 'Build long-term wealth',
+  'passive_income': 'Create a passive income stream',
+  'tax_reduction': 'Reduce my taxable income',
+};
+
+export const WEALTH_GOAL_SUBTITLES: Record<WealthGoal, string> = {
+  'capital_growth': 'Focus on capital growth for retirement',
+  'passive_income': 'Focus on high-yielding cash flow',
+  'tax_reduction': 'Focus on tax minimisation and depreciation',
+};
+
+export const WEALTH_GOAL_CRM_VALUES: Record<WealthGoal, string> = {
+  'capital_growth': 'capital_growth',
+  'passive_income': 'passive_income',
+  'tax_reduction': 'tax_reduction',
+};
+
+// Strategy profiles based on goal — used in calculations engine
+export interface StrategyProfile {
+  capitalGrowthRate: number; // annual %
+  grossRentalYield: number;  // annual %
+  depreciationMode: 'standard' | 'maximum';
+  strategyLabel: string;
+  resultsSummary: string; // dynamic sub-headline for results
+}
+
+export function getStrategyProfile(goal: WealthGoal | null): StrategyProfile {
+  switch (goal) {
+    case 'capital_growth':
+      return {
+        capitalGrowthRate: 7.5,
+        grossRentalYield: 3.8,
+        depreciationMode: 'standard',
+        strategyLabel: 'Growth Corridor Strategy',
+        resultsSummary: 'Based on your goal to build long-term wealth, we\'ve calculated your projections using a high-growth (7.5% p.a.) investment strategy.',
+      };
+    case 'passive_income':
+      return {
+        capitalGrowthRate: 4.5,
+        grossRentalYield: 6.5,
+        depreciationMode: 'standard',
+        strategyLabel: 'High-Yield Cash Flow Strategy',
+        resultsSummary: 'Based on your goal to create passive income, we\'ve calculated your projections using a high-yield (6.5%) investment strategy.',
+      };
+    case 'tax_reduction':
+      return {
+        capitalGrowthRate: 5.5,
+        grossRentalYield: 5.0,
+        depreciationMode: 'maximum',
+        strategyLabel: 'Tax Optimisation Strategy',
+        resultsSummary: 'Based on your goal to reduce taxable income, we\'ve calculated your projections using a maximum-depreciation new-build strategy.',
+      };
+    default:
+      return {
+        capitalGrowthRate: 5.5,
+        grossRentalYield: 5.0,
+        depreciationMode: 'standard',
+        strategyLabel: 'Balanced Strategy',
+        resultsSummary: 'Your projections are based on a balanced investment strategy with moderate growth and yield.',
+      };
+  }
+}
+
+// Results tab ordering based on goal
+export type TabOrder = 'growth' | 'cashflow' | 'tax';
+export function getTabOrder(goal: WealthGoal | null): TabOrder[] {
+  switch (goal) {
+    case 'capital_growth': return ['growth', 'cashflow', 'tax'];
+    case 'passive_income': return ['cashflow', 'growth', 'tax'];
+    case 'tax_reduction':  return ['tax', 'cashflow', 'growth'];
+    default:               return ['growth', 'cashflow', 'tax'];
+  }
+}
+
 // --- Qualification Fields ---
 export type PropertyOwnership = 'own-home' | 'own-investment' | 'renting' | 'other';
 export type EquityRange = 'under-50k' | '50k-100k' | '100k-200k' | '200k-500k' | 'over-500k';
