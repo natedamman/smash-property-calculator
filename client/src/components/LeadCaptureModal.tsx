@@ -58,8 +58,8 @@ export function LeadCaptureModal({
     try {
       // HubSpot Forms API v3
       // Replace PORTAL_ID and FORM_ID with actual HubSpot values
-      const PORTAL_ID = "YOUR_HUBSPOT_PORTAL_ID";
-      const FORM_ID = "YOUR_HUBSPOT_FORM_ID";
+      const PORTAL_ID = "46147239";
+      const FORM_ID = "ae9af09d-c7cf-4fec-9031-847128baa58e";
 
       // Build enriched fields array
       const fields = [
