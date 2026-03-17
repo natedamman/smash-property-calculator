@@ -85,7 +85,7 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
       <div className="text-center mb-8">
         <Badge className="mb-3 bg-primary/10 text-primary border-primary/20 hover:bg-primary/10"><CheckCircle2 className="w-3 h-3 mr-1" />Report Unlocked</Badge>
         <h1 className="text-xl font-bold mb-2" data-testid="text-results-title">{copy.resultsTitle}</h1>
-        <p className="text-sm text-muted-foreground">{propertyInputs.suburb ? `${propertyInputs.suburb}, ` : ''}{propertyInputs.state} &mdash; {formatCurrency(propertyInputs.propertyPrice)}</p>
+        <p className="text-sm text-muted-foreground">{propertyInputs.suburb ? `${propertyInputs.suburb}, ` : ''}{propertyInputs.displayState === 'OPEN' ? 'Australia-wide' : propertyInputs.state} &mdash; {formatCurrency(propertyInputs.propertyPrice)}</p>
         <div className="mt-3 flex justify-center"><SocialProofTicker /></div>
         {wealthGoal && (
           <p className="text-xs text-muted-foreground italic mt-3 max-w-md mx-auto" data-testid="text-strategy-summary">{getStrategyProfile(wealthGoal).resultsSummary}</p>

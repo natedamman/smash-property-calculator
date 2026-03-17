@@ -10,6 +10,7 @@ export interface PropertyInputs {
   weeklyRent: number;
   suburb: string;
   state: string;
+  displayState?: string;
   wealthGoal: WealthGoal | null;
 }
 

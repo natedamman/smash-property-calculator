@@ -71,7 +71,7 @@ export function LeadCaptureModal({
         // Property details
         { objectTypeId: "0-1", name: "property_price", value: propertyInputs.propertyPrice.toString() },
         { objectTypeId: "0-1", name: "weekly_rent", value: propertyInputs.weeklyRent.toString() },
-        { objectTypeId: "0-1", name: "property_state", value: propertyInputs.state },
+        { objectTypeId: "0-1", name: "property_state", value: propertyInputs.displayState === 'OPEN' ? 'Open to best opportunities' : propertyInputs.state },
         { objectTypeId: "0-1", name: "primary_wealth_goal", value: wealthGoal ? WEALTH_GOAL_CRM_VALUES[wealthGoal] : "" },
         // Financial details
         { objectTypeId: "0-1", name: "annual_income", value: financialInputs.annualIncome.toString() },

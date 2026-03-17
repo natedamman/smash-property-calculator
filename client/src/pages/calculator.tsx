@@ -28,6 +28,7 @@ import { LeadCaptureModal } from "@/components/LeadCaptureModal";
 import { SmashLogo } from "@/components/SmashLogo";
 
 const STATES = [
+  { value: 'OPEN', label: 'Open to best opportunities' },
   { value: 'VIC', label: 'Victoria' },
   { value: 'NSW', label: 'New South Wales' },
   { value: 'QLD', label: 'Queensland' },
@@ -37,6 +38,9 @@ const STATES = [
   { value: 'NT', label: 'Northern Territory' },
   { value: 'ACT', label: 'ACT' },
 ];
+
+// When "Open to best opportunities" is selected, use VIC for calculations
+const getCalcState = (s: string) => s === 'OPEN' ? 'VIC' : s;
 
 
 
@@ -62,7 +66,7 @@ export default function CalculatorPage() {
   const [propertyPrice, setPropertyPrice] = useState<string>("650000");
   const [weeklyRent, setWeeklyRent] = useState<string>("500");
   const [suburb, setSuburb] = useState<string>("");
-  const [state, setState] = useState<string>("VIC");
+  const [state, setState] = useState<string>("OPEN");
   
   // Financial inputs
   const [annualIncome, setAnnualIncome] = useState<string>("120000");
@@ -85,10 +89,13 @@ export default function CalculatorPage() {
     ? Math.round((Number(propertyPrice) || 0) * (strategyProfile.grossRentalYield / 100) / 52)
     : Number(weeklyRent) || 0;
 
+  const calcState = getCalcState(state);
+
   const propertyInputs: PropertyInputs = {
     propertyPrice: Number(propertyPrice) || 0,
     weeklyRent: derivedWeeklyRent,
-    suburb, state,
+    suburb, state: calcState,
+    displayState: state,
     wealthGoal,
   };
 
@@ -117,7 +124,7 @@ export default function CalculatorPage() {
 
   const handleLeadCaptured = () => { setLeadCaptured(true); setShowModal(false); setStep(5); };
 
-  const stampDuty = calculateStampDuty(Number(propertyPrice) || 0, state);
+  const stampDuty = calculateStampDuty(Number(propertyPrice) || 0, calcState);
   const loanAmount = (Number(propertyPrice) || 0) - (Number(deposit) || 0);
 
   const isStep0Valid = investorType !== null && propertyOwnership !== null && equityRange !== null && investmentTimeline !== null;
@@ -300,11 +307,11 @@ export default function CalculatorPage() {
                 </div>
               </div>
 
-              {/* State */}
+              {/* Preferred Investment Location */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium">State</Label>
+                <Label className="text-sm font-medium">Preferred Investment Location</Label>
                 <Select value={state} onValueChange={setState}>
-                  <SelectTrigger data-testid="select-state" className="h-12"><SelectValue placeholder="Select state" /></SelectTrigger>
+                  <SelectTrigger data-testid="select-state" className="h-12"><SelectValue placeholder="Select location" /></SelectTrigger>
                   <SelectContent>{STATES.map(s => (<SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>))}</SelectContent>
                 </Select>
               </div>
@@ -312,8 +319,8 @@ export default function CalculatorPage() {
               {/* Purchase Price */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium">Purchase Price</Label>
-                  <Tooltip><TooltipTrigger><Info className="w-4 h-4 text-muted-foreground" /></TooltipTrigger><TooltipContent><p className="text-xs max-w-[200px]">The expected purchase price of the investment property</p></TooltipContent></Tooltip>
+                  <Label className="text-sm font-medium">Target Investment Budget</Label>
+                  <Tooltip><TooltipTrigger><Info className="w-4 h-4 text-muted-foreground" /></TooltipTrigger><TooltipContent><p className="text-xs max-w-[200px]">Your target budget for the investment property</p></TooltipContent></Tooltip>
                 </div>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -321,7 +328,7 @@ export default function CalculatorPage() {
                 </div>
                 {Number(propertyPrice) > 0 && (
                   <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Stamp duty ({state}): {formatCurrency(stampDuty)}</p>
+                    <p className="text-xs text-muted-foreground">Stamp duty ({calcState}{state === 'OPEN' ? ' rates used' : ''}): {formatCurrency(stampDuty)}</p>
                     {wealthGoal && <p className="text-xs text-muted-foreground">Estimated weekly rent ({strategyProfile.grossRentalYield}% yield): <span className="font-medium text-foreground">{formatCurrency(derivedWeeklyRent)}/wk</span></p>}
                   </div>
                 )}
