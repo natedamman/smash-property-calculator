@@ -1,0 +1,282 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* SMASH PROPERTY — Amber/Gold on Dark Charcoal */
+/* Brand: #FBAD1C (amber), #2F2E2E (charcoal), #C88D21 (deep gold) */
+
+:root {
+  --button-outline: rgba(0,0,0, .10);
+  --badge-outline: rgba(0,0,0, .05);
+  --opaque-button-border-intensity: -8;
+  --elevate-1: rgba(0,0,0, .03);
+  --elevate-2: rgba(0,0,0, .08);
+
+  /* Light mode — warm, clean */
+  --background: 40 20% 97%;
+  --foreground: 30 10% 14%;
+  --border: 35 12% 88%;
+  --card: 40 18% 99%;
+  --card-foreground: 30 10% 14%;
+  --card-border: 35 12% 92%;
+  --sidebar: 40 18% 95%;
+  --sidebar-foreground: 30 10% 14%;
+  --sidebar-border: 35 12% 90%;
+  --sidebar-primary: 40 96% 55%;
+  --sidebar-primary-foreground: 30 10% 14%;
+  --sidebar-accent: 35 12% 90%;
+  --sidebar-accent-foreground: 30 10% 14%;
+  --sidebar-ring: 40 96% 55%;
+  --popover: 40 20% 97%;
+  --popover-foreground: 30 10% 14%;
+  --popover-border: 35 12% 88%;
+  --primary: 40 96% 55%;
+  --primary-foreground: 30 10% 14%;
+  --secondary: 35 12% 92%;
+  --secondary-foreground: 30 10% 14%;
+  --muted: 35 10% 93%;
+  --muted-foreground: 30 6% 46%;
+  --accent: 35 12% 92%;
+  --accent-foreground: 30 10% 14%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 98%;
+  --input: 35 12% 80%;
+  --ring: 40 96% 55%;
+  --chart-1: 40 96% 55%;
+  --chart-2: 168 65% 38%;
+  --chart-3: 220 50% 50%;
+  --chart-4: 340 65% 47%;
+  --chart-5: 25 95% 53%;
+  --font-sans: 'Montserrat', 'Inter', sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: .625rem;
+
+  --shadow-2xs: 0px 1px 0px 0px hsl(30 10% 10% / 0.02);
+  --shadow-xs: 0px 1px 2px 0px hsl(30 10% 10% / 0.04);
+  --shadow-sm: 0px 1px 3px 0px hsl(30 10% 10% / 0.06), 0px 1px 2px -1px hsl(30 10% 10% / 0.04);
+  --shadow: 0px 2px 4px 0px hsl(30 10% 10% / 0.06), 0px 1px 2px -1px hsl(30 10% 10% / 0.04);
+  --shadow-md: 0px 4px 8px -1px hsl(30 10% 10% / 0.08), 0px 2px 4px -1px hsl(30 10% 10% / 0.04);
+  --shadow-lg: 0px 8px 16px -2px hsl(30 10% 10% / 0.10), 0px 4px 6px -1px hsl(30 10% 10% / 0.04);
+  --shadow-xl: 0px 16px 32px -4px hsl(30 10% 10% / 0.12), 0px 8px 10px -2px hsl(30 10% 10% / 0.04);
+  --shadow-2xl: 0px 24px 48px -8px hsl(30 10% 10% / 0.18);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --primary-border: hsl(var(--primary));
+  --secondary-border: hsl(var(--secondary));
+  --muted-border: hsl(var(--muted));
+  --accent-border: hsl(var(--accent));
+  --destructive-border: hsl(var(--destructive));
+}
+
+.dark {
+  --button-outline: rgba(255,255,255, .10);
+  --badge-outline: rgba(255,255,255, .05);
+  --opaque-button-border-intensity: 9;
+  --elevate-1: rgba(255,255,255, .04);
+  --elevate-2: rgba(255,255,255, .09);
+
+  /* Dark mode — Smash Property charcoal + amber */
+  --background: 0 1% 16%;
+  --foreground: 40 10% 94%;
+  --border: 0 1% 24%;
+  --card: 0 1% 18%;
+  --card-foreground: 40 10% 94%;
+  --card-border: 0 1% 22%;
+  --sidebar: 0 1% 15%;
+  --sidebar-foreground: 40 10% 94%;
+  --sidebar-border: 0 1% 22%;
+  --sidebar-primary: 40 96% 55%;
+  --sidebar-primary-foreground: 0 1% 10%;
+  --sidebar-accent: 0 1% 22%;
+  --sidebar-accent-foreground: 40 10% 94%;
+  --sidebar-ring: 40 96% 55%;
+  --popover: 0 1% 20%;
+  --popover-foreground: 40 10% 94%;
+  --popover-border: 0 1% 24%;
+  --primary: 40 96% 55%;
+  --primary-foreground: 0 1% 10%;
+  --secondary: 0 1% 24%;
+  --secondary-foreground: 40 10% 94%;
+  --muted: 0 1% 26%;
+  --muted-foreground: 0 0% 56%;
+  --accent: 0 1% 24%;
+  --accent-foreground: 40 10% 94%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 98%;
+  --input: 0 1% 30%;
+  --ring: 40 96% 55%;
+  --chart-1: 40 96% 58%;
+  --chart-2: 168 55% 48%;
+  --chart-3: 220 50% 60%;
+  --chart-4: 340 60% 57%;
+  --chart-5: 25 90% 60%;
+
+  --shadow-2xs: 0px 1px 0px 0px hsl(0 0% 0% / 0.10);
+  --shadow-xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.15);
+  --shadow-sm: 0px 1px 3px 0px hsl(0 0% 0% / 0.20), 0px 1px 2px -1px hsl(0 0% 0% / 0.12);
+  --shadow: 0px 2px 4px 0px hsl(0 0% 0% / 0.20), 0px 1px 2px -1px hsl(0 0% 0% / 0.12);
+  --shadow-md: 0px 4px 8px -1px hsl(0 0% 0% / 0.25), 0px 2px 4px -1px hsl(0 0% 0% / 0.15);
+  --shadow-lg: 0px 8px 16px -2px hsl(0 0% 0% / 0.30), 0px 4px 6px -1px hsl(0 0% 0% / 0.15);
+  --shadow-xl: 0px 16px 32px -4px hsl(0 0% 0% / 0.35), 0px 8px 10px -2px hsl(0 0% 0% / 0.15);
+  --shadow-2xl: 0px 24px 48px -8px hsl(0 0% 0% / 0.45);
+
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --primary-border: hsl(var(--primary));
+  --secondary-border: hsl(var(--secondary));
+  --muted-border: hsl(var(--muted));
+  --accent-border: hsl(var(--accent));
+  --destructive-border: hsl(var(--destructive));
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Custom animations */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.3); }
+  50% { box-shadow: 0 0 0 8px hsl(var(--primary) / 0); }
+}
+
+.animate-count-up {
+  animation: countUp 0.5s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--accent)) 50%, hsl(var(--muted)) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Blur overlay for teased results */
+.blur-overlay {
+  filter: blur(6px);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Step transition */
+.step-enter {
+  animation: fadeIn 0.35s ease-out forwards;
+}
+
+/* Progress bar gradient */
+.progress-gradient {
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(40 96% 42%));
+}
+
+/* Elevated card style */
+.card-elevated {
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@layer utilities {
+  input[type="search"]::-webkit-search-cancel-button {
+    @apply hidden;
+  }
+
+  [contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+  }
+
+  .no-default-hover-elevate {}
+  .no-default-active-elevate {}
+
+  .toggle-elevate::before,
+  .toggle-elevate-2::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  .toggle-elevate.toggle-elevated::before {
+    background-color: var(--elevate-2);
+  }
+
+  .border.toggle-elevate::before {
+    inset: -1px;
+  }
+
+  .hover-elevate:not(.no-default-hover-elevate),
+  .active-elevate:not(.no-default-active-elevate),
+  .hover-elevate-2:not(.no-default-hover-elevate),
+  .active-elevate-2:not(.no-default-active-elevate) {
+    position: relative;
+    z-index: 0;
+  }
+
+  .hover-elevate:not(.no-default-hover-elevate)::after,
+  .active-elevate:not(.no-default-active-elevate)::after,
+  .hover-elevate-2:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:not(.no-default-active-elevate)::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    border-radius: inherit;
+    z-index: 999;
+  }
+
+  .hover-elevate:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-1);
+  }
+
+  .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-2);
+  }
+
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate-2:not(.no-active-interaction-elevate)::after {
+    inset: -1px;
+  }
+}
