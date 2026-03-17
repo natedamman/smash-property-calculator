@@ -240,18 +240,8 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
             </div>
           </div>
 
-          <Button onClick={scrollToCTA} variant="destructive" size="lg" className="w-full h-auto min-h-[3.5rem] py-3 px-4 text-sm sm:text-base font-bold bg-red-600 hover:bg-red-700 text-white leading-tight" data-testid="button-fear-cta"><Phone className="w-5 h-5 mr-2 shrink-0" /><span>{copy.fearCtaText}</span></Button>
-          <p className="text-xs text-center text-muted-foreground mt-3">{investorType === 'first-time' ? "Most first-time investors say they wish they'd started 5 years earlier. Don't be one of them." : "Smart investors move fast when the numbers make sense. The numbers make sense."}</p>
         </div>
       </div>
-
-      {/* Scarcity strip */}
-      <Card className="p-4 bg-primary/5 border-primary/20">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-sm"><Clock className="w-4 h-4 text-primary" /><span className="font-medium">Limited availability</span><span className="text-muted-foreground">— Only 5 clarity call spots left this week</span></div>
-          <Button onClick={scrollToCTA} variant="outline" size="sm" className="border-primary/30 text-primary hover:bg-primary/10 whitespace-nowrap">Claim Your Spot</Button>
-        </div>
-      </Card>
 
       {/* Social proof */}
       <Card className="p-5 border-border/50">
