@@ -183,7 +183,7 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
             <p className="text-sm text-muted-foreground leading-relaxed">
               {investorType === 'first-time'
                 ? `As a first-time investor, the ATO effectively subsidises your property by ${formatCurrency(taxBenefits.taxSavingWeekly)} per week (${formatCurrency(taxBenefits.taxSavingAnnual)} annually). This is money you're currently missing out on by not investing. Combined with rental income, your after-tax holding cost is just ${formatCurrency(Math.abs(taxBenefits.afterTaxWeeklyCashFlow))} per week${taxBenefits.afterTaxCashFlow >= 0 ? " — and you're actually cash flow positive from day one." : '.'}`
-                : `The ATO effectively subsidises your investment by ${formatCurrency(taxBenefits.taxSavingWeekly)} per week (${formatCurrency(taxBenefits.taxSavingAnnual)} annually). Combined with rental income, your after-tax holding cost is just ${formatCurrency(Math.abs(taxBenefits.afterTaxWeeklyCashFlow))} per week${taxBenefits.afterTaxCashFlow >= 0 ? " — and you're actually cash flow positive." : '.'}`}
+                : `The ATO effectively subsidises your investment by ${formatCurrency(taxBenefits.taxSavingWeekly)} per week (${formatCurrency(taxBenefits.taxSavingAnnual)} annually). Combined with rental income, your after-tax holding cost is just ${formatCurrency(Math.abs(taxBenefits.afterTaxWeeklyCashFlow))} per week${taxBenefits.afterTaxCashFlow >= 0 ? " - and you're actually cash flow positive." : '.'}`}
             </p>
           </Card>
         </TabsContent>
@@ -270,7 +270,7 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
             <Button size="lg" className="h-14 px-10 text-base font-semibold animate-pulse-glow" data-testid="button-book-session"><Calendar className="w-5 h-5 mr-2" />{copy.ctaButtonText}</Button>
             <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /><span>100% free</span></div>
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Clock className="w-3.5 h-3.5" /><span>Just 15 minutes</span></div>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Clock className="w-3.5 h-3.5" /><span> Clear Direction In Just 15 minutes</span></div>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Users className="w-3.5 h-3.5" /><span>2,847+ investors helped</span></div>
             </div>
           </div>
