@@ -55,6 +55,11 @@ export function LeadCaptureModal({
     setLoading(true);
     setError("");
 
+    const HUBSPOT_CONFIG = {
+  portalId: '46147239',
+  formId: 'ae9af09d-c7cf-4fec-9031-847128baa58e'
+};
+    
     try {
       // HubSpot Forms API v3
       // Replace PORTAL_ID and FORM_ID with actual HubSpot values
