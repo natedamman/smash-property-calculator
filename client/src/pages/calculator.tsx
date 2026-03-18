@@ -26,6 +26,7 @@ import {
 import { ResultsDashboard } from "@/components/ResultsDashboard";
 import { LeadCaptureModal } from "@/components/LeadCaptureModal";
 import { SmashLogo } from "@/components/SmashLogo";
+import { Testimonials } from "@/components/Testimonials";
 
 const STATES = [
   { value: 'OPEN', label: 'Open to best opportunities' },
@@ -470,6 +471,7 @@ export default function CalculatorPage() {
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><CheckCircle2 className="w-3.5 h-3.5" /><span>No spam, ever</span></div>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Users className="w-3.5 h-3.5" /><span>2,847+ investors helped</span></div>
             </div>
+            <Testimonials />
             <div className="mt-6"><Button variant="ghost" onClick={handleBack} data-testid="button-back-step3" className="text-muted-foreground"><ArrowLeft className="w-4 h-4 mr-2" />Back to edit inputs</Button></div>
           </div>
         )}
