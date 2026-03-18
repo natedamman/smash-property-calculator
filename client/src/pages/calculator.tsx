@@ -427,17 +427,23 @@ export default function CalculatorPage() {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-              <Card className="p-5">
-                <p className="text-xs text-muted-foreground mb-1">Gross Rental Yield</p>
-                <p className="text-2xl font-bold text-primary animate-count-up" data-testid="text-gross-yield">{formatPercent(results.cashFlow.grossYield)}</p>
-                <p className="text-xs text-muted-foreground mt-1">Annual rental return on purchase price</p>
-              </Card>
-              <Card className="p-5">
-                <p className="text-xs text-muted-foreground mb-1">Weekly Cash Flow</p>
-                <p className={`text-2xl font-bold animate-count-up ${results.cashFlow.weeklyCashFlow >= 0 ? 'text-emerald-500' : 'text-amber-500'}`} data-testid="text-weekly-cashflow">{formatCurrency(results.cashFlow.weeklyCashFlow)}</p>
-                <p className="text-xs text-muted-foreground mt-1">Before tax benefits</p>
-              </Card>
+            <div className="grid grid-cols-3 gap-3 mb-6">
+              {[1, 5, 10].map((yr) => {
+                const proj = results.tenYear.projections.find(p => p.year === yr);
+                const gain = proj ? proj.propertyValue - propertyInputs.propertyPrice : 0;
+                return (
+                  <Card key={yr} className="p-4 text-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
+                    <div className="relative">
+                      <p className="text-xs text-muted-foreground mb-1">Year {yr}</p>
+                      <p className="text-sm sm:text-2xl font-bold text-primary animate-count-up" data-testid={`text-equity-yr${yr}`}>
+                        {formatCurrency(proj?.propertyValue ?? 0)}
+                      </p>
+                      <p className="text-[10px] sm:text-xs font-medium text-emerald-500 mt-1">+{formatCurrency(gain)}</p>
+                    </div>
+                  </Card>
+                );
+              })}
             </div>
             <div className="relative mb-6">
               <div className="blur-overlay space-y-4">
