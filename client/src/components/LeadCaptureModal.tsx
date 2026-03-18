@@ -132,7 +132,7 @@ export function LeadCaptureModal({
       };
 
       // If HubSpot IDs aren't configured, skip the API call but still capture
-      if (PORTAL_ID !== "YOUR_HUBSPOT_PORTAL_ID" && FORM_ID !== "YOUR_HUBSPOT_FORM_ID") {
+      if (PORTAL_ID && FORM_ID) {
         const response = await fetch(
           `https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${FORM_ID}`,
           {
