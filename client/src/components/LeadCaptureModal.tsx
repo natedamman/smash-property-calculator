@@ -63,100 +63,105 @@ export function LeadCaptureModal({
       const PORTAL_ID = "46147239";
       const FORM_ID = "ae9af09d-c7cf-4fec-9031-847128baa58e";
 
-      // Build enriched fields array
-      const fields = [
-        // Standard contact fields
+      // Standard HubSpot contact fields (these always exist)
+      const fields: { objectTypeId: string; name: string; value: string }[] = [
         { objectTypeId: "0-1", name: "firstname", value: firstName },
         { objectTypeId: "0-1", name: "lastname", value: lastName },
         { objectTypeId: "0-1", name: "email", value: email },
         { objectTypeId: "0-1", name: "phone", value: phone },
-        // Property details
-        { objectTypeId: "0-1", name: "property_price", value: propertyInputs.propertyPrice.toString() },
-        { objectTypeId: "0-1", name: "weekly_rent", value: propertyInputs.weeklyRent.toString() },
-        { objectTypeId: "0-1", name: "property_state", value: propertyInputs.displayState === 'OPEN' ? 'Open to best opportunities' : propertyInputs.state },
-        { objectTypeId: "0-1", name: "primary_wealth_goal", value: wealthGoal ? WEALTH_GOAL_CRM_VALUES[wealthGoal] : "" },
-        // Financial details
-        { objectTypeId: "0-1", name: "annual_income", value: financialInputs.annualIncome.toString() },
-        { objectTypeId: "0-1", name: "deposit_amount", value: financialInputs.deposit.toString() },
-        { objectTypeId: "0-1", name: "interest_rate", value: financialInputs.interestRate.toString() },
-        // Lead source
-        { objectTypeId: "0-1", name: "lead_source", value: "Property Wealth Calculator" },
-        // Qualification & segmentation fields
-        { objectTypeId: "0-1", name: "investor_type", value: investorType ?? "" },
-        {
-          objectTypeId: "0-1",
-          name: "property_ownership_status",
-          value: qualification.propertyOwnership
-            ? OWNERSHIP_LABELS[qualification.propertyOwnership]
-            : "",
-        },
-        {
-          objectTypeId: "0-1",
-          name: "usable_equity_range",
-          value: qualification.equityRange
-            ? EQUITY_RANGE_LABELS[qualification.equityRange]
-            : "",
-        },
-        {
-          objectTypeId: "0-1",
-          name: "investment_timeline",
-          value: qualification.investmentTimeline
-            ? TIMELINE_LABELS[qualification.investmentTimeline]
-            : "",
-        },
-        // Lead scoring fields
-        {
-          objectTypeId: "0-1",
-          name: "lead_temperature",
-          value: leadScore?.temperature ?? "",
-        },
-        {
-          objectTypeId: "0-1",
-          name: "lead_score",
-          value: leadScore?.score?.toString() ?? "",
-        },
-        {
-          objectTypeId: "0-1",
-          name: "lead_score_reasons",
-          value: leadScore?.reasons?.join("; ") ?? "",
-        },
+      ];
+
+      // Custom property fields — these only work if the matching custom properties
+      // have been created in HubSpot. We send them separately so a failure doesn't
+      // block the core contact creation.
+      const customFields: { name: string; value: string }[] = [
+        { name: "property_price", value: propertyInputs.propertyPrice.toString() },
+        { name: "weekly_rent", value: propertyInputs.weeklyRent.toString() },
+        { name: "property_state", value: propertyInputs.displayState === 'OPEN' ? 'Open to best opportunities' : propertyInputs.state },
+        { name: "primary_wealth_goal", value: wealthGoal ? WEALTH_GOAL_CRM_VALUES[wealthGoal] : "" },
+        { name: "annual_income", value: financialInputs.annualIncome.toString() },
+        { name: "deposit_amount", value: financialInputs.deposit.toString() },
+        { name: "interest_rate", value: financialInputs.interestRate.toString() },
+        { name: "lead_source", value: "Property Wealth Calculator" },
+        { name: "investor_type", value: investorType ?? "" },
+        { name: "property_ownership_status", value: qualification.propertyOwnership ? OWNERSHIP_LABELS[qualification.propertyOwnership] : "" },
+        { name: "usable_equity_range", value: qualification.equityRange ? EQUITY_RANGE_LABELS[qualification.equityRange] : "" },
+        { name: "investment_timeline", value: qualification.investmentTimeline ? TIMELINE_LABELS[qualification.investmentTimeline] : "" },
+        { name: "lead_temperature", value: leadScore?.temperature ?? "" },
+        { name: "lead_score", value: leadScore?.score?.toString() ?? "" },
+        { name: "lead_score_reasons", value: leadScore?.reasons?.join("; ") ?? "" },
+      ];
+
+      // Build a summary message for the HubSpot "message" field as a fallback
+      // so all data is captured even without custom properties
+      const locationLabel = propertyInputs.displayState === 'OPEN' ? 'Open to best opportunities' : propertyInputs.state;
+      const messageSummary = [
+        `Wealth Goal: ${wealthGoal ? WEALTH_GOAL_CRM_VALUES[wealthGoal] : 'Not selected'}`,
+        `Investment Budget: $${propertyInputs.propertyPrice.toLocaleString()}`,
+        `Location: ${locationLabel}`,
+        `Weekly Rent (est.): $${propertyInputs.weeklyRent}`,
+        `Annual Income: $${financialInputs.annualIncome.toLocaleString()}`,
+        `Deposit: $${financialInputs.deposit.toLocaleString()}`,
+        `Interest Rate: ${financialInputs.interestRate}%`,
+        `Investor Type: ${investorType ?? 'N/A'}`,
+        `Ownership: ${qualification.propertyOwnership ? OWNERSHIP_LABELS[qualification.propertyOwnership] : 'N/A'}`,
+        `Equity Range: ${qualification.equityRange ? EQUITY_RANGE_LABELS[qualification.equityRange] : 'N/A'}`,
+        `Timeline: ${qualification.investmentTimeline ? TIMELINE_LABELS[qualification.investmentTimeline] : 'N/A'}`,
+        `Lead Score: ${leadScore?.score ?? 'N/A'}/100 (${leadScore?.temperature ?? 'N/A'})`,
+      ].join('\n');
+
+      // Merge standard + custom fields for the submission
+      const allFields = [
+        ...fields,
+        ...customFields.map(f => ({ objectTypeId: "0-1", ...f })),
+        { objectTypeId: "0-1", name: "message", value: messageSummary },
       ];
 
       const hubspotData = {
         submittedAt: Date.now().toString(),
-        fields,
+        fields: allFields,
         context: {
           pageUri: window.location.href,
           pageName: "Property Wealth Snapshot Calculator",
         },
+        legalConsentOptions: {
+          consent: {
+            consentToProcess: true,
+            text: "I agree to receive my Property Wealth Snapshot report and occasional property investment insights from Smash Property.",
+          },
+        },
       };
 
-      // If HubSpot IDs aren't configured, skip the API call but still capture
-      if (PORTAL_ID && FORM_ID) {
-        const response = await fetch(
-          `https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${FORM_ID}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(hubspotData),
-          }
-        );
-        if (!response.ok) {
-          console.warn("HubSpot submission failed:", await response.text());
-        }
-      } else {
-        // Log the lead data for debugging / manual capture
-        console.log("Lead captured (HubSpot not configured):", {
-          firstName,
-          lastName,
-          email,
-          phone,
-          property: propertyInputs,
-          financial: financialInputs,
-          qualification,
-          investorType,
-          leadScore,
+      const submitUrl = `https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${FORM_ID}`;
+      const headers = { "Content-Type": "application/json" };
+
+      // Try with all fields first
+      let response = await fetch(submitUrl, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(hubspotData),
+      });
+
+      // If it fails (likely custom fields don't exist yet), retry with just
+      // standard fields + message summary so the lead is never lost
+      if (!response.ok) {
+        console.warn("HubSpot full submission failed, retrying with standard fields only:", await response.text());
+        const fallbackData = {
+          submittedAt: Date.now().toString(),
+          fields: [
+            ...fields,
+            { objectTypeId: "0-1", name: "message", value: messageSummary },
+          ],
+          context: hubspotData.context,
+        };
+        response = await fetch(submitUrl, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(fallbackData),
         });
+        if (!response.ok) {
+          console.warn("HubSpot fallback submission also failed:", await response.text());
+        }
       }
 
       // Small delay for UX
