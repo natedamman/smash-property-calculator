@@ -75,9 +75,9 @@ export function LeadCaptureModal({
       // have been created in HubSpot. We send them separately so a failure doesn't
       // block the core contact creation.
       const customFields: { name: string; value: string }[] = [
-        { name: "property_price", value: propertyInputs.propertyPrice.toString() },
+        { name: "target_investment_budget", value: propertyInputs.propertyPrice.toString() },
         { name: "weekly_rent", value: propertyInputs.weeklyRent.toString() },
-        { name: "property_state", value: propertyInputs.displayState === 'OPEN' ? 'Open to best opportunities' : propertyInputs.state },
+        { name: "preferred_investment_location", value: propertyInputs.displayState === 'OPEN' ? 'Open to best opportunities' : propertyInputs.state },
         { name: "primary_wealth_goal", value: wealthGoal ? WEALTH_GOAL_CRM_VALUES[wealthGoal] : "" },
         { name: "annual_income", value: financialInputs.annualIncome.toString() },
         { name: "deposit_amount", value: financialInputs.deposit.toString() },
