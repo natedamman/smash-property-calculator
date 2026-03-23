@@ -49,7 +49,7 @@ export function LeadCaptureModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const isValid = firstName.trim() && lastName.trim() && email.trim() && email.includes("@") && phone.trim() && consent;
+  const isValid = firstName.trim().length >= 2 && lastName.trim().length >= 2 && email.trim() && email.includes("@") && phone.trim().length >= 8 && consent;
 
   const handleSubmit = async () => {
     if (!isValid) return;
@@ -212,7 +212,9 @@ export function LeadCaptureModal({
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="John"
                 className="h-11"
+                minLength={2}
               />
+              {firstName.length === 1 && <p className="text-xs text-destructive">Please enter your full first name</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="lastName" className="text-sm">
@@ -225,7 +227,9 @@ export function LeadCaptureModal({
                 onChange={(e) => setLastName(e.target.value)}
                 placeholder="Smith"
                 className="h-11"
+                minLength={2}
               />
+              {lastName.length === 1 && <p className="text-xs text-destructive">Please enter your full last name</p>}
             </div>
           </div>
 
