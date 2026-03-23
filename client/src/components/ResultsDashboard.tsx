@@ -17,6 +17,7 @@ import {
   formatCurrency, formatPercent 
 } from "@/lib/calculations";
 import { type InvestorType, type WealthGoal, type QualificationData, type LeadScore, type PersonalisedCopy, getStrategyProfile, getTabOrder, WEALTH_GOAL_LABELS } from "@/lib/lead-scoring";
+import { trackCalendlyClick, trackResultsView } from "@/lib/analytics";
 
 interface Props {
   results: CalculatorResults;
@@ -110,7 +111,7 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
       </div>
 
       {/* Tabs — ordered by wealth goal */}
-      <Tabs defaultValue={tabOrder[0]} className="w-full">
+      <Tabs defaultValue={tabOrder[0]} className="w-full" onValueChange={(tab) => trackResultsView(tab)}>
         <TabsList className="w-full grid grid-cols-3">
           {tabOrder.map(tab => (
             <TabsTrigger key={tab} value={tab} data-testid={`tab-${tab}`}>
@@ -267,7 +268,7 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
               <div className="flex items-start gap-2 bg-background/60 rounded-lg p-3 border border-border/50"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /><span className="text-xs text-muted-foreground">{investorType === 'first-time' ? 'Clear first steps tailored to you' : 'Portfolio optimisation strategy'}</span></div>
               <div className="flex items-start gap-2 bg-background/60 rounded-lg p-3 border border-border/50"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /><span className="text-xs text-muted-foreground">No obligation, no sales pitch</span></div>
             </div>
-            <Button size="lg" className="h-14 px-10 text-base font-semibold animate-pulse-glow" data-testid="button-book-session"><Calendar className="w-5 h-5 mr-2" />{copy.ctaButtonText}</Button>
+            <Button size="lg" className="h-14 px-10 text-base font-semibold animate-pulse-glow" data-testid="button-book-session" onClick={() => trackCalendlyClick()}><Calendar className="w-5 h-5 mr-2" />{copy.ctaButtonText}</Button>
             <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /><span>100% free</span></div>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Clock className="w-3.5 h-3.5" /><span> Clear Direction In Just 15 minutes</span></div>

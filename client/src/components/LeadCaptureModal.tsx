@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Shield, Lock, CheckCircle2, Loader2 } from "lucide-react";
 import { type PropertyInputs, type FinancialInputs, formatCurrency } from "@/lib/calculations";
+import { trackLeadFormSubmit, trackLeadFormError } from "@/lib/analytics";
 import {
   type QualificationData,
   type InvestorType,
@@ -164,11 +165,21 @@ export function LeadCaptureModal({
         }
       }
 
+      // Track successful submission
+      trackLeadFormSubmit({
+        wealthGoal: wealthGoal ?? '',
+        investorType: investorType ?? '',
+        leadScore: leadScore?.score ?? null,
+        temperature: leadScore?.temperature ?? '',
+        investmentBudget: propertyInputs.propertyPrice,
+      });
+
       // Small delay for UX
       await new Promise((resolve) => setTimeout(resolve, 800));
       onSuccess();
     } catch (err) {
       console.error("Lead capture error:", err);
+      trackLeadFormError('submission_failed');
       // Still let them through even if HubSpot fails
       onSuccess();
     } finally {

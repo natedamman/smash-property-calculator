@@ -27,6 +27,11 @@ import { ResultsDashboard } from "@/components/ResultsDashboard";
 import { LeadCaptureModal } from "@/components/LeadCaptureModal";
 import { SmashLogo } from "@/components/SmashLogo";
 import { Testimonials } from "@/components/Testimonials";
+import {
+  trackStepView, trackStepComplete, trackInvestorType, trackOwnershipStatus,
+  trackEquityRange, trackTimeline, trackWealthGoal, trackButtonClick,
+  trackUnlockClick, trackLeadFormOpen, startStepTimer, endStepTimer,
+} from "@/lib/analytics";
 
 const STATES = [
   { value: 'OPEN', label: 'Open to best opportunities' },
@@ -82,6 +87,10 @@ export default function CalculatorPage() {
   useEffect(() => {
     if (contentRef.current) contentRef.current.scrollTop = 0;
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Analytics: track step views and start timer
+    const stepNames: Record<number, string> = { 0: 'qualification', 1: 'property_details', 2: 'financial_details', 3: 'preview_results', 5: 'full_results' };
+    trackStepView(step, stepNames[step] ?? 'unknown');
+    startStepTimer(step);
   }, [step]);
 
   // Derive weekly rent from strategy profile yield when price changes
@@ -111,10 +120,13 @@ export default function CalculatorPage() {
   const computeResults = () => { const r = calculateAll(propertyInputs, financialInputs); setResults(r); return r; };
 
   const handleNext = () => {
+    const stepNames: Record<number, string> = { 0: 'qualification', 1: 'property_details', 2: 'financial_details', 3: 'preview_results' };
+    endStepTimer(step);
+    trackStepComplete(step, stepNames[step] ?? 'unknown');
     if (step === 0) setStep(1);
     else if (step === 1) setStep(2);
     else if (step === 2) { computeResults(); setStep(3); }
-    else if (step === 3) setShowModal(true);
+    else if (step === 3) { trackUnlockClick(); trackLeadFormOpen(); setShowModal(true); }
   };
 
   const handleBack = () => {
@@ -190,7 +202,7 @@ export default function CalculatorPage() {
               <div className="space-y-3">
                 <Label className="text-sm font-medium">What best describes you?</Label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <button onClick={() => setInvestorType('first-time')} data-testid="button-investor-first-time"
+                  <button onClick={() => { setInvestorType('first-time'); trackInvestorType('first-time'); }} data-testid="button-investor-first-time"
                     className={`p-5 rounded-xl border-2 text-left transition-all duration-200 ${investorType === 'first-time' ? 'border-primary bg-primary/5 text-foreground' : 'border-border hover:border-primary/40 text-muted-foreground hover:text-foreground'}`}>
                     <div className="flex items-center gap-3 mb-2">
                       <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${investorType === 'first-time' ? 'bg-primary/15' : 'bg-muted'}`}>
@@ -200,7 +212,7 @@ export default function CalculatorPage() {
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">I'm looking to buy my first investment property and want to understand the numbers</p>
                   </button>
-                  <button onClick={() => setInvestorType('portfolio-builder')} data-testid="button-investor-portfolio"
+                  <button onClick={() => { setInvestorType('portfolio-builder'); trackInvestorType('portfolio-builder'); }} data-testid="button-investor-portfolio"
                     className={`p-5 rounded-xl border-2 text-left transition-all duration-200 ${investorType === 'portfolio-builder' ? 'border-primary bg-primary/5 text-foreground' : 'border-border hover:border-primary/40 text-muted-foreground hover:text-foreground'}`}>
                     <div className="flex items-center gap-3 mb-2">
                       <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${investorType === 'portfolio-builder' ? 'bg-primary/15' : 'bg-muted'}`}>
@@ -219,7 +231,7 @@ export default function CalculatorPage() {
                   <Label className="text-sm font-medium">Current property status</Label>
                   <div className="grid grid-cols-2 gap-2">
                     {(Object.entries(OWNERSHIP_LABELS) as [PropertyOwnership, string][]).map(([value, label]) => (
-                      <button key={value} onClick={() => setPropertyOwnership(value)} data-testid={`button-ownership-${value}`}
+                      <button key={value} onClick={() => { setPropertyOwnership(value); trackOwnershipStatus(value); }} data-testid={`button-ownership-${value}`}
                         className={`p-3.5 rounded-xl border-2 text-center text-sm transition-all duration-200 ${propertyOwnership === value ? 'border-primary bg-primary/5 font-medium text-foreground' : 'border-border hover:border-primary/40 text-muted-foreground hover:text-foreground'}`}>
                         {label}
                       </button>
@@ -236,7 +248,7 @@ export default function CalculatorPage() {
                   </Label>
                   <div className="grid grid-cols-1 gap-2">
                     {(Object.entries(EQUITY_RANGE_LABELS) as [EquityRange, string][]).map(([value, label]) => (
-                      <button key={value} onClick={() => setEquityRange(value)} data-testid={`button-equity-${value}`}
+                      <button key={value} onClick={() => { setEquityRange(value); trackEquityRange(value); }} data-testid={`button-equity-${value}`}
                         className={`p-3.5 rounded-xl border-2 text-left text-sm transition-all duration-200 flex items-center justify-between ${equityRange === value ? 'border-primary bg-primary/5 font-medium text-foreground' : 'border-border hover:border-primary/40 text-muted-foreground hover:text-foreground'}`}>
                         <span>{label}</span>
                         {equityRange === value && <CheckCircle2 className="w-4 h-4 text-primary" />}
@@ -252,7 +264,7 @@ export default function CalculatorPage() {
                   <Label className="text-sm font-medium">When are you looking to invest?</Label>
                   <div className="grid grid-cols-1 gap-2">
                     {(Object.entries(TIMELINE_LABELS) as [InvestmentTimeline, string][]).map(([value, label]) => (
-                      <button key={value} onClick={() => setInvestmentTimeline(value)} data-testid={`button-timeline-${value}`}
+                      <button key={value} onClick={() => { setInvestmentTimeline(value); trackTimeline(value); }} data-testid={`button-timeline-${value}`}
                         className={`p-3.5 rounded-xl border-2 text-left text-sm transition-all duration-200 flex items-center gap-3 ${investmentTimeline === value ? 'border-primary bg-primary/5 font-medium text-foreground' : 'border-border hover:border-primary/40 text-muted-foreground hover:text-foreground'}`}>
                         {value === 'immediately' && <Zap className={`w-4 h-4 shrink-0 ${investmentTimeline === value ? 'text-primary' : ''}`} />}
                         {(value === 'within-3-months' || value === 'within-6-months' || value === 'within-12-months') && <Clock className={`w-4 h-4 shrink-0 ${investmentTimeline === value ? 'text-primary' : ''}`} />}
@@ -294,7 +306,7 @@ export default function CalculatorPage() {
                 <Label className="text-sm font-medium">What is your primary wealth goal?</Label>
                 <div className="grid grid-cols-1 gap-3">
                   {(Object.entries(WEALTH_GOAL_LABELS) as [WealthGoal, string][]).map(([value, label]) => (
-                    <button key={value} onClick={() => setWealthGoal(value)} data-testid={`button-goal-${value}`}
+                    <button key={value} onClick={() => { setWealthGoal(value); trackWealthGoal(value); }} data-testid={`button-goal-${value}`}
                       className={`p-5 rounded-xl border-2 text-left transition-all duration-200 ${wealthGoal === value ? 'border-primary bg-primary/5 text-foreground' : 'border-border hover:border-primary/40 text-muted-foreground hover:text-foreground'}`}>
                       <div className="flex items-center justify-between">
                         <div>
