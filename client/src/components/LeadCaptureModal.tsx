@@ -48,7 +48,7 @@ export function LeadCaptureModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const isValid = firstName.trim() && email.trim() && email.includes("@") && consent;
+  const isValid = firstName.trim() && lastName.trim() && email.trim() && email.includes("@") && phone.trim() && consent;
 
   const handleSubmit = async () => {
     if (!isValid) return;
@@ -192,7 +192,7 @@ export function LeadCaptureModal({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
               <Label htmlFor="firstName" className="text-sm">
-                First Name
+                First Name <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="firstName"
@@ -205,7 +205,7 @@ export function LeadCaptureModal({
             </div>
             <div className="space-y-2">
               <Label htmlFor="lastName" className="text-sm">
-                Last Name
+                Last Name <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="lastName"
@@ -220,7 +220,7 @@ export function LeadCaptureModal({
 
           <div className="space-y-2">
             <Label htmlFor="email" className="text-sm">
-              Email
+              Email <span className="text-destructive">*</span>
             </Label>
             <Input
               id="email"
@@ -235,7 +235,7 @@ export function LeadCaptureModal({
 
           <div className="space-y-2">
             <Label htmlFor="phone" className="text-sm">
-              Phone (optional)
+              Phone <span className="text-destructive">*</span>
             </Label>
             <Input
               id="phone"
