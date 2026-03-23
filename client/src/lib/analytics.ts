@@ -1,23 +1,20 @@
 // ============================================
-// GTM / GA4 EVENT TRACKING
-// Push events to dataLayer for Google Tag Manager
+// GA4 EVENT TRACKING via gtag.js
+// All custom events flow to Google Analytics 4
 // ============================================
 
 declare global {
   interface Window {
-    dataLayer: Record<string, unknown>[];
+    gtag: (...args: unknown[]) => void;
+    dataLayer: unknown[];
   }
 }
 
-// Ensure dataLayer exists
-function getDataLayer() {
-  window.dataLayer = window.dataLayer || [];
-  return window.dataLayer;
-}
-
-// Generic push
+// Send event to GA4 via gtag
 function pushEvent(event: string, params?: Record<string, unknown>) {
-  getDataLayer().push({ event, ...params });
+  if (typeof window.gtag === 'function') {
+    window.gtag('event', event, params ?? {});
+  }
 }
 
 // ── Step / Funnel Events ──────────────────────────
