@@ -1,12 +1,13 @@
 // ============================================
-// GA4 EVENT TRACKING via gtag.js
-// All custom events flow to Google Analytics 4
+// GA4 + META PIXEL EVENT TRACKING
+// GA4 via gtag.js, Meta via fbq
 // ============================================
 
 declare global {
   interface Window {
     gtag: (...args: unknown[]) => void;
     dataLayer: unknown[];
+    fbq: (...args: unknown[]) => void;
   }
 }
 
@@ -14,6 +15,18 @@ declare global {
 function pushEvent(event: string, params?: Record<string, unknown>) {
   if (typeof window.gtag === 'function') {
     window.gtag('event', event, params ?? {});
+  }
+}
+
+// Send event to Meta Pixel via fbq
+function metaTrack(event: string, params?: Record<string, unknown>) {
+  if (typeof window.fbq === 'function') {
+    window.fbq('track', event, params ?? {});
+  }
+}
+function metaTrackCustom(event: string, params?: Record<string, unknown>) {
+  if (typeof window.fbq === 'function') {
+    window.fbq('trackCustom', event, params ?? {});
   }
 }
 
@@ -31,6 +44,10 @@ export function trackStepComplete(step: number, stepName: string) {
     step_number: step,
     step_name: stepName,
   });
+  // Meta Pixel: track calculator completion as ViewContent
+  if (step === 2) {
+    metaTrack("ViewContent", { content_name: "Calculator Results" });
+  }
 }
 
 // ── Qualification / Selection Events ──────────────
@@ -72,6 +89,7 @@ export function trackUnlockClick() {
 
 export function trackLeadFormOpen() {
   pushEvent("lead_form_open");
+  metaTrackCustom("LeadFormOpen");
 }
 
 export function trackLeadFormSubmit(data: {
@@ -88,6 +106,13 @@ export function trackLeadFormSubmit(data: {
     lead_temperature: data.temperature,
     investment_budget: data.investmentBudget,
   });
+  // Meta Pixel: standard Lead event
+  metaTrack("Lead", {
+    content_name: "Property Wealth Snapshot",
+    content_category: data.wealthGoal,
+    value: data.investmentBudget,
+    currency: "AUD",
+  });
 }
 
 export function trackLeadFormError(errorType: string) {
@@ -102,6 +127,8 @@ export function trackResultsView(tab: string) {
 
 export function trackCalendlyClick() {
   pushEvent("cta_click", { button_name: "find_a_time", click_context: "results_calendly" });
+  // Meta Pixel: standard Schedule event
+  metaTrack("Schedule", { content_name: "Clarity Call" });
 }
 
 // ── Utility: Track time on each step ──────────────
