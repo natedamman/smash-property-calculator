@@ -259,22 +259,39 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
         <Card className="p-6 sm:p-8 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-          <div className="relative text-center">
-            <Badge className="mb-3 bg-primary/10 text-primary border-primary/20 hover:bg-primary/10"><Clock className="w-3 h-3 mr-1" />{copy.ctaBadge}</Badge>
-            <h3 className="text-lg sm:text-xl font-bold mb-2">{copy.ctaHeadline}</h3>
-            <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">{copy.ctaDescription}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 text-left max-w-lg mx-auto">
-              <div className="flex items-start gap-2 bg-background/60 rounded-lg p-3 border border-border/50"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /><span className="text-xs text-muted-foreground">Personalised review of your numbers</span></div>
-              <div className="flex items-start gap-2 bg-background/60 rounded-lg p-3 border border-border/50"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /><span className="text-xs text-muted-foreground">{investorType === 'first-time' ? 'Clear first steps tailored to you' : 'Portfolio optimisation strategy'}</span></div>
-              <div className="flex items-start gap-2 bg-background/60 rounded-lg p-3 border border-border/50"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /><span className="text-xs text-muted-foreground">No obligation, no sales pitch</span></div>
+          <div className="relative">
+            <div className="text-center mb-6">
+              <h3 className="text-lg sm:text-xl font-bold mb-1">Your detailed analysis is just the beginning!</h3>
+              <p className="text-sm text-muted-foreground">Now let's make sense of it together — <span className="line-through text-muted-foreground/60">Normally $197</span> <span className="font-semibold text-primary">Included FREE</span> with your snapshot!</p>
             </div>
-            <a href="https://calendly.com/admin-smashpropertyinvesting/smash-property-clarity-call" target="_blank" rel="noopener noreferrer" onClick={() => trackCalendlyClick()}>
-              <Button size="lg" className="h-14 px-10 text-base font-semibold animate-pulse-glow" data-testid="button-book-session"><Calendar className="w-5 h-5 mr-2" />{copy.ctaButtonText}</Button>
-            </a>
-            <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /><span>100% free</span></div>
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Clock className="w-3.5 h-3.5" /><span> Clear Direction In Just 15 minutes</span></div>
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Users className="w-3.5 h-3.5" /><span>2,847+ investors helped</span></div>
+
+            <p className="text-sm text-muted-foreground leading-relaxed mb-5 text-center max-w-lg mx-auto">
+              In just 15 minutes, one of our property investment specialists will walk you through your personalised results, explain what the numbers actually mean for your situation, and help you understand your realistic next steps.
+            </p>
+
+            <p className="text-sm font-semibold mb-3">What you'll get:</p>
+            <div className="space-y-2.5 mb-6 max-w-lg mx-auto">
+              <div className="flex items-start gap-2.5"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /><span className="text-sm text-muted-foreground">Plain English explanation of your cash flow projections</span></div>
+              <div className="flex items-start gap-2.5"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /><span className="text-sm text-muted-foreground">Tax benefit breakdown — how that annual deduction actually works</span></div>
+              <div className="flex items-start gap-2.5"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /><span className="text-sm text-muted-foreground">Growth trajectory insights — what your equity position really means</span></div>
+              <div className="flex items-start gap-2.5"><CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" /><span className="text-sm text-muted-foreground">First steps roadmap — if this makes sense for your situation</span></div>
+            </div>
+
+            <p className="text-sm font-semibold text-center mb-1">No obligation. No high-pressure sales pitch. Just clarity.</p>
+            <p className="text-xs text-muted-foreground text-center mb-6 max-w-md mx-auto leading-relaxed">
+              This isn't about convincing you to buy anything. It's about ensuring you fully understand your property investment snapshot so you can make an informed decision that's right for you.
+            </p>
+
+            <div className="text-center">
+              <a href="https://calendly.com/admin-smashpropertyinvesting/smash-property-clarity-call" target="_blank" rel="noopener noreferrer" onClick={() => trackCalendlyClick()}>
+                <Button size="lg" className="h-14 px-10 text-base font-semibold animate-pulse-glow" data-testid="button-book-session"><Calendar className="w-5 h-5 mr-2" />{copy.ctaButtonText}</Button>
+              </a>
+              <p className="text-xs text-muted-foreground mt-4 italic max-w-sm mx-auto">Most investors tell us this 15-minute conversation was worth more than months of trying to figure it out alone.</p>
+              <div className="flex flex-wrap items-center justify-center gap-4 mt-4">
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /><span>100% free</span></div>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Clock className="w-3.5 h-3.5" /><span>Just 15 minutes</span></div>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground"><Users className="w-3.5 h-3.5" /><span>2,847+ investors helped</span></div>
+              </div>
             </div>
           </div>
         </Card>
