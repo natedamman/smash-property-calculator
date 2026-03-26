@@ -214,7 +214,7 @@ export function LeadCaptureModal({
                 className="h-11"
                 minLength={2}
               />
-              {firstName.length === 1 && <p className="text-xs text-destructive">Please enter your full first name</p>}
+              {firstName.length > 0 && firstName.trim().length < 2 && <p className="text-xs text-destructive">Please enter your full first name</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="lastName" className="text-sm">
@@ -229,7 +229,7 @@ export function LeadCaptureModal({
                 className="h-11"
                 minLength={2}
               />
-              {lastName.length === 1 && <p className="text-xs text-destructive">Please enter your full last name</p>}
+              {lastName.length > 0 && lastName.trim().length < 2 && <p className="text-xs text-destructive">Please enter your full last name</p>}
             </div>
           </div>
 
@@ -261,6 +261,7 @@ export function LeadCaptureModal({
               placeholder="04XX XXX XXX"
               className="h-11"
             />
+            {phone.length > 0 && phone.trim().length < 8 && <p className="text-xs text-destructive">Please enter a valid phone number</p>}
           </div>
 
           <div className="flex items-start gap-2">
