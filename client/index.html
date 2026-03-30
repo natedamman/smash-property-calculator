@@ -18,9 +18,15 @@
       t.src=v;s=b.getElementsByTagName(e)[0];
       s.parentNode.insertBefore(t,s)}(window, document,'script',
       'https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '3390105951260014');
+      fbq('init', '3390105951260014', {
+  em: 'email@email.com',   // Values will be hashed automatically by the pixel using SHA-256
+  ph: '1234567890',
+  fn: 'firstname';
+});
       fbq('track', 'PageView');
     </script>
+
+    
     <noscript><img height="1" width="1" style="display:none"
       src="https://www.facebook.com/tr?id=3390105951260014&ev=PageView&noscript=1"
     /></noscript>
