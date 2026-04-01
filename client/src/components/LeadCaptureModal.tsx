@@ -56,8 +56,16 @@ export function LeadCaptureModal({
     setLoading(true);
     setError("");
 
+    // Fire Meta Pixel Lead event immediately on submit — before any async work
+    // so it's never lost due to network delays or API errors
+    trackLeadFormSubmit({
+      wealthGoal: wealthGoal ?? '',
+      investorType: investorType ?? '',
+      leadScore: leadScore?.score ?? null,
+      temperature: leadScore?.temperature ?? '',
+      investmentBudget: propertyInputs.propertyPrice,
+    });
 
-    
     try {
       // HubSpot Forms API v3
       // Replace PORTAL_ID and FORM_ID with actual HubSpot values
@@ -164,15 +172,6 @@ export function LeadCaptureModal({
           console.warn("HubSpot fallback submission also failed:", await response.text());
         }
       }
-
-      // Track successful submission
-      trackLeadFormSubmit({
-        wealthGoal: wealthGoal ?? '',
-        investorType: investorType ?? '',
-        leadScore: leadScore?.score ?? null,
-        temperature: leadScore?.temperature ?? '',
-        investmentBudget: propertyInputs.propertyPrice,
-      });
 
       // Small delay for UX
       await new Promise((resolve) => setTimeout(resolve, 800));
