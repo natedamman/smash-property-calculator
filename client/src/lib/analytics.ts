@@ -98,6 +98,11 @@ export function trackLeadFormSubmit(data: {
   leadScore: number | null;
   temperature: string;
   investmentBudget: number;
+  // Advanced Matching — passed to Meta so it can link conversions back to ad audiences
+  email?: string;
+  phone?: string;
+  firstName?: string;
+  lastName?: string;
 }) {
   pushEvent("lead_form_submit", {
     wealth_goal: data.wealthGoal,
@@ -106,13 +111,29 @@ export function trackLeadFormSubmit(data: {
     lead_temperature: data.temperature,
     investment_budget: data.investmentBudget,
   });
-  // Meta Pixel: standard Lead event
-  metaTrack("Lead", {
-    content_name: "Property Wealth Snapshot",
-    content_category: data.wealthGoal,
-    value: data.investmentBudget,
-    currency: "AUD",
-  });
+
+  if (typeof window.fbq === 'function') {
+    // Update Advanced Matching before firing the Lead event.
+    // Meta's pixel hashes all user data (email, phone, name) client-side
+    // before sending — we never transmit plaintext PII to Facebook.
+    // This dramatically improves post-iOS-14 conversion matching rates.
+    if (data.email || data.phone || data.firstName || data.lastName) {
+      window.fbq('init', '3390105951260014', {
+        em: data.email?.toLowerCase().trim() ?? '',
+        ph: data.phone?.replace(/\s+/g, '') ?? '',
+        fn: data.firstName?.toLowerCase().trim() ?? '',
+        ln: data.lastName?.toLowerCase().trim() ?? '',
+      });
+    }
+
+    // Fire the Lead conversion event
+    window.fbq('track', 'Lead', {
+      content_name: "Property Wealth Snapshot",
+      content_category: data.wealthGoal,
+      value: data.investmentBudget,
+      currency: "AUD",
+    });
+  }
 }
 
 export function trackLeadFormError(errorType: string) {

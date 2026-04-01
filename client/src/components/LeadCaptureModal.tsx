@@ -57,13 +57,19 @@ export function LeadCaptureModal({
     setError("");
 
     // Fire Meta Pixel Lead event immediately on submit — before any async work
-    // so it's never lost due to network delays or API errors
+    // so it's never lost due to network delays or API errors.
+    // User data is passed for Advanced Matching — Meta hashes it client-side
+    // before transmission so no plaintext PII reaches Facebook's servers.
     trackLeadFormSubmit({
       wealthGoal: wealthGoal ?? '',
       investorType: investorType ?? '',
       leadScore: leadScore?.score ?? null,
       temperature: leadScore?.temperature ?? '',
       investmentBudget: propertyInputs.propertyPrice,
+      email: email,
+      phone: phone,
+      firstName: firstName,
+      lastName: lastName,
     });
 
     try {
