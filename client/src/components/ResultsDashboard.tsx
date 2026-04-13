@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { trackCalendlyClick, trackResultsView } from "@/lib/analytics";
 
 interface Props {
