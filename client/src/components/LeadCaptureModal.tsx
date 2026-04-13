@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Shield, Lock, CheckCircle2, Loader2 } from "lucide-react";
-import { type PropertyInputs, type FinancialInputs, formatCurrency } from "@/lib/calculations";
+import { type PropertyInputs, type FinancialInputs, type CalculatorResults, formatCurrency } from "@/lib/calculations";
 import { trackLeadFormSubmit, trackLeadFormError } from "@/lib/analytics";
 import {
   type QualificationData,
@@ -24,6 +24,7 @@ interface Props {
   onSuccess: () => void;
   propertyInputs: PropertyInputs;
   financialInputs: FinancialInputs;
+  results: CalculatorResults | null;
   qualification: QualificationData;
   investorType: InvestorType | null;
   leadScore: LeadScore | null;
@@ -36,6 +37,7 @@ export function LeadCaptureModal({
   onSuccess,
   propertyInputs,
   financialInputs,
+  results,
   qualification,
   investorType,
   leadScore,
@@ -105,6 +107,35 @@ export function LeadCaptureModal({
         { name: "lead_temperature", value: leadScore?.temperature ?? "" },
         { name: "lead_score", value: leadScore?.score?.toString() ?? "" },
         { name: "lead_score_reasons", value: leadScore?.reasons?.join("; ") ?? "" },
+        // Snapshot results — for personalised email
+        ...(results ? [
+          // Cash flow
+          { name: "snapshot_weekly_cashflow", value: formatCurrency(results.cashFlow.weeklyCashFlow) },
+          { name: "snapshot_annual_cashflow", value: formatCurrency(results.cashFlow.annualCashFlow) },
+          { name: "snapshot_gross_yield", value: `${results.cashFlow.grossYield.toFixed(2)}%` },
+          { name: "snapshot_net_yield", value: `${results.cashFlow.netYield.toFixed(2)}%` },
+          { name: "snapshot_weekly_rent", value: formatCurrency(results.cashFlow.grossRentalIncome / 52) },
+          { name: "snapshot_loan_repayment_weekly", value: formatCurrency(results.cashFlow.loanRepaymentWeekly) },
+          { name: "snapshot_total_annual_expenses", value: formatCurrency(results.cashFlow.totalAnnualExpenses) },
+          // Tax benefits
+          { name: "snapshot_tax_saving_annual", value: formatCurrency(results.taxBenefits.taxSavingAnnual) },
+          { name: "snapshot_tax_saving_weekly", value: formatCurrency(results.taxBenefits.taxSavingWeekly) },
+          { name: "snapshot_total_tax_deduction", value: formatCurrency(results.taxBenefits.totalTaxDeduction) },
+          { name: "snapshot_depreciation_year1", value: formatCurrency(results.taxBenefits.depreciationYear1) },
+          { name: "snapshot_negative_gearing", value: formatCurrency(results.taxBenefits.negativeGearingDeduction) },
+          { name: "snapshot_after_tax_weekly_cashflow", value: formatCurrency(results.taxBenefits.afterTaxWeeklyCashFlow) },
+          // 10-year growth
+          { name: "snapshot_property_value_year1", value: formatCurrency(results.tenYear.projections.find(p => p.year === 1)?.propertyValue ?? 0) },
+          { name: "snapshot_property_value_year5", value: formatCurrency(results.tenYear.projections.find(p => p.year === 5)?.propertyValue ?? 0) },
+          { name: "snapshot_property_value_year10", value: formatCurrency(results.tenYear.propertyValueYear10) },
+          { name: "snapshot_equity_year10", value: formatCurrency(results.tenYear.equityYear10) },
+          { name: "snapshot_total_wealth_created", value: formatCurrency(results.tenYear.totalWealthCreated) },
+          { name: "snapshot_total_rental_income", value: formatCurrency(results.tenYear.totalRentalIncomeEarned) },
+          { name: "snapshot_total_tax_savings", value: formatCurrency(results.tenYear.totalTaxSavingsEarned) },
+          { name: "snapshot_growth_rate", value: `${results.tenYear.growthRate.toFixed(1)}%` },
+          // Wealth score
+          { name: "snapshot_wealth_score", value: results.wealthScore.toString() },
+        ] : []),
       ];
 
       // Build a summary message for the HubSpot "message" field as a fallback
@@ -123,6 +154,24 @@ export function LeadCaptureModal({
         `Equity Range: ${qualification.equityRange ? EQUITY_RANGE_LABELS[qualification.equityRange] : 'N/A'}`,
         `Timeline: ${qualification.investmentTimeline ? TIMELINE_LABELS[qualification.investmentTimeline] : 'N/A'}`,
         `Lead Score: ${leadScore?.score ?? 'N/A'}/100 (${leadScore?.temperature ?? 'N/A'})`,
+        '',
+        '--- SNAPSHOT RESULTS ---',
+        ...(results ? [
+          `Weekly Cash Flow: ${formatCurrency(results.cashFlow.weeklyCashFlow)}`,
+          `Annual Cash Flow: ${formatCurrency(results.cashFlow.annualCashFlow)}`,
+          `Gross Yield: ${results.cashFlow.grossYield.toFixed(2)}%`,
+          `Net Yield: ${results.cashFlow.netYield.toFixed(2)}%`,
+          `Annual Tax Saving: ${formatCurrency(results.taxBenefits.taxSavingAnnual)}`,
+          `Total Tax Deduction: ${formatCurrency(results.taxBenefits.totalTaxDeduction)}`,
+          `After-Tax Weekly Cash Flow: ${formatCurrency(results.taxBenefits.afterTaxWeeklyCashFlow)}`,
+          `Property Value Year 1: ${formatCurrency(results.tenYear.projections.find(p => p.year === 1)?.propertyValue ?? 0)}`,
+          `Property Value Year 5: ${formatCurrency(results.tenYear.projections.find(p => p.year === 5)?.propertyValue ?? 0)}`,
+          `Property Value Year 10: ${formatCurrency(results.tenYear.propertyValueYear10)}`,
+          `Equity Year 10: ${formatCurrency(results.tenYear.equityYear10)}`,
+          `Total Wealth Created: ${formatCurrency(results.tenYear.totalWealthCreated)}`,
+          `Growth Rate: ${results.tenYear.growthRate.toFixed(1)}%`,
+          `Wealth Score: ${results.wealthScore}/100`,
+        ] : []),
       ].join('\n');
 
       // Merge standard + custom fields for the submission

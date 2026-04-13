@@ -496,7 +496,7 @@ export default function CalculatorPage() {
         )}
       </main>
 
-      <LeadCaptureModal open={showModal} onClose={() => setShowModal(false)} onSuccess={handleLeadCaptured} propertyInputs={propertyInputs} financialInputs={financialInputs} qualification={qualification} investorType={investorType} leadScore={leadScore} wealthGoal={wealthGoal} />
+      <LeadCaptureModal open={showModal} onClose={() => setShowModal(false)} onSuccess={handleLeadCaptured} propertyInputs={propertyInputs} financialInputs={financialInputs} results={results} qualification={qualification} investorType={investorType} leadScore={leadScore} wealthGoal={wealthGoal} />
 
       <footer className="border-t border-border/50 bg-card/30 mt-auto">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6">
