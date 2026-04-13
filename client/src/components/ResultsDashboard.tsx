@@ -283,7 +283,7 @@ export function ResultsDashboard({ results, propertyInputs, financialInputs, inv
             </p>
 
             <div className="text-center">
-              <a href="https://calendly.com/admin-smashpropertyinvesting/smash-property-clarity-call" target="_blank" rel="noopener noreferrer" onClick={() => trackCalendlyClick()}>
+              <a href="https://freesnapshot.smashproperty.com.au/smash-property-clarity-call#call" target="_blank" rel="noopener noreferrer" onClick={() => trackCalendlyClick()}>
                 <Button size="lg" className="h-14 px-10 text-base font-semibold animate-pulse-glow" data-testid="button-book-session"><Calendar className="w-5 h-5 mr-2" />{copy.ctaButtonText}</Button>
               </a>
               <p className="text-xs text-muted-foreground mt-4 italic max-w-sm mx-auto">Most investors tell us this 15-minute conversation was worth more than months of trying to figure it out alone.</p>
