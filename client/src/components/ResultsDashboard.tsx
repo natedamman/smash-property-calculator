@@ -1,4 +1,22 @@
 import { useState, useEffect, useRef } from "react";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { 
+  TrendingUp, TrendingDown, DollarSign, Percent, 
+  BarChart3, CheckCircle2, Phone, Clock, Calendar,
+  Timer, Users, ShieldCheck, Star, Flame, Skull, Ban
+} from "lucide-react";
+import { 
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, 
+  ResponsiveContainer, Legend
+} from "recharts";
+import { 
+  type CalculatorResults, type PropertyInputs, type FinancialInputs,
+  formatCurrency, formatPercent 
+} from "@/lib/calculations";
+import { type InvestorType, type WealthGoal, type QualificationData, type LeadScore, type PersonalisedCopy, getStrategyProfile, getTabOrder, WEALTH_GOAL_LABELS } from "@/lib/lead-scoring";
 import { trackCalendlyClick, trackResultsView } from "@/lib/analytics";
 
 interface Props {
