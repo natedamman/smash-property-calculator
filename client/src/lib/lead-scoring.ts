@@ -104,6 +104,25 @@ export interface LeadScore {
   reasons: string[];
 }
 
+// --- Minimum Intent Threshold ---
+// Both conditions MUST be true for a lead to qualify as HOT.
+// Failing either hard gate caps the temperature at WARM or COLD regardless of score.
+const HOT_EQUITY_THRESHOLD: EquityRange[] = ['50k-100k', '100k-200k', '200k-500k', 'over-500k'];
+const HOT_TIMELINE_THRESHOLD: InvestmentTimeline[] = ['immediately', 'within-3-months'];
+
+function meetsHotEquityThreshold(equity: EquityRange | null): boolean {
+  return equity !== null && HOT_EQUITY_THRESHOLD.includes(equity);
+}
+
+function meetsHotTimelineThreshold(timeline: InvestmentTimeline | null): boolean {
+  return timeline !== null && HOT_TIMELINE_THRESHOLD.includes(timeline);
+}
+
+// Hard cap: anyone who says "just exploring" is never warmer than COLD
+function isJustExploring(timeline: InvestmentTimeline | null): boolean {
+  return timeline === 'just-exploring';
+}
+
 // --- Lead Scoring Logic ---
 export function calculateLeadScore(
   qualification: QualificationData,
@@ -194,9 +213,27 @@ export function calculateLeadScore(
 
   score = Math.min(100, score);
 
+  // --- Apply minimum intent threshold (hard gates) ---
+  // HOT requires: score >= 60 AND equity >= $50k AND timeline <= 3 months
+  // "Just exploring" is always COLD regardless of score or equity
+  const hasHotEquity = meetsHotEquityThreshold(qualification.equityRange);
+  const hasHotTimeline = meetsHotTimelineThreshold(qualification.investmentTimeline);
+  const justExploring = isJustExploring(qualification.investmentTimeline);
+
   let temperature: LeadTemperature;
-  if (score >= 60) {
+
+  if (justExploring) {
+    // Hard floor: browsers are always COLD
+    temperature = 'COLD';
+    reasons.push('Disqualified: just exploring — no urgency');
+  } else if (score >= 60 && hasHotEquity && hasHotTimeline) {
+    // HOT: high score AND both hard gates pass
     temperature = 'HOT';
+  } else if (score >= 60 && (!hasHotEquity || !hasHotTimeline)) {
+    // Would have been HOT on score alone but fails a gate — demote to WARM
+    temperature = 'WARM';
+    if (!hasHotEquity) reasons.push('Downgraded: equity below $50k threshold');
+    if (!hasHotTimeline) reasons.push('Downgraded: timeline beyond 3-month window');
   } else if (score >= 35) {
     temperature = 'WARM';
   } else {
