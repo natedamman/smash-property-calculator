@@ -69,15 +69,15 @@ export default function CalculatorPage() {
   const [wealthGoal, setWealthGoal] = useState<WealthGoal | null>(null);
 
   // Property inputs
-  const [propertyPrice, setPropertyPrice] = useState<string>("650000");
-  const [weeklyRent, setWeeklyRent] = useState<string>("500");
+  const [propertyPrice, setPropertyPrice] = useState<string>("");
+  const [weeklyRent, setWeeklyRent] = useState<string>("");
   const [suburb, setSuburb] = useState<string>("");
   const [state, setState] = useState<string>("OPEN");
   
   // Financial inputs
-  const [annualIncome, setAnnualIncome] = useState<string>("120000");
-  const [deposit, setDeposit] = useState<string>("130000");
-  const [existingDebt, setExistingDebt] = useState<string>("0");
+  const [annualIncome, setAnnualIncome] = useState<string>("");
+  const [deposit, setDeposit] = useState<string>("");
+  const [existingDebt, setExistingDebt] = useState<string>("");
   const [interestRate, setInterestRate] = useState<number[]>([6.2]);
   const [loanTerm, setLoanTerm] = useState<number[]>([30]);
 
@@ -337,7 +337,7 @@ export default function CalculatorPage() {
                 </div>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input data-testid="input-property-price" type="text" inputMode="numeric" value={propertyPrice} onChange={(e) => setPropertyPrice(e.target.value.replace(/[^0-9]/g, ''))} className="pl-9 h-12 text-lg font-medium" />
+                  <Input data-testid="input-property-price" type="text" inputMode="numeric" value={propertyPrice} onChange={(e) => setPropertyPrice(e.target.value.replace(/[^0-9]/g, ''))} className="pl-9 h-12 text-lg font-medium" placeholder="e.g. 650000" />
                 </div>
                 {Number(propertyPrice) > 0 && (
                   <div className="space-y-1">
@@ -375,7 +375,7 @@ export default function CalculatorPage() {
                 </div>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input data-testid="input-annual-income" type="text" inputMode="numeric" value={annualIncome} onChange={(e) => setAnnualIncome(e.target.value.replace(/[^0-9]/g, ''))} className="pl-9 h-12 text-lg font-medium" />
+                  <Input data-testid="input-annual-income" type="text" inputMode="numeric" value={annualIncome} onChange={(e) => setAnnualIncome(e.target.value.replace(/[^0-9]/g, ''))} className="pl-9 h-12 text-lg font-medium" placeholder="e.g. 120000" />
                 </div>
               </div>
               <div className="space-y-2">
@@ -385,7 +385,7 @@ export default function CalculatorPage() {
                 </div>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input data-testid="input-deposit" type="text" inputMode="numeric" value={deposit} onChange={(e) => setDeposit(e.target.value.replace(/[^0-9]/g, ''))} className="pl-9 h-12 text-lg font-medium" />
+                  <Input data-testid="input-deposit" type="text" inputMode="numeric" value={deposit} onChange={(e) => setDeposit(e.target.value.replace(/[^0-9]/g, ''))} className="pl-9 h-12 text-lg font-medium" placeholder="e.g. 130000" />
                 </div>
                 {Number(propertyPrice) > 0 && Number(deposit) > 0 && <p className="text-xs text-muted-foreground">LVR: {formatPercent(((Number(propertyPrice) - Number(deposit)) / Number(propertyPrice)) * 100)} | Loan amount: {formatCurrency(loanAmount)}</p>}
               </div>
@@ -393,7 +393,7 @@ export default function CalculatorPage() {
                 <Label className="text-sm font-medium">Existing Debt (excl. home loan)</Label>
                 <div className="relative">
                   <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input data-testid="input-existing-debt" type="text" inputMode="numeric" value={existingDebt} onChange={(e) => setExistingDebt(e.target.value.replace(/[^0-9]/g, ''))} className="pl-9 h-12" placeholder="0" />
+                  <Input data-testid="input-existing-debt" type="text" inputMode="numeric" value={existingDebt} onChange={(e) => setExistingDebt(e.target.value.replace(/[^0-9]/g, ''))} className="pl-9 h-12" placeholder="0 if none" />
                 </div>
               </div>
               <div className="space-y-3">
